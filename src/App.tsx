@@ -1,15 +1,31 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
 import { Agreement } from './components/Agreement';
+import styled from 'styled-components';
 
 function App() {
   return (
-    <div className="App">
-      <p>Din Vipps månedlige betalingsavtale</p>
+    <AppContainer>
       <Agreement />
-    </div>
+    </AppContainer>
   );
 }
+
+const AppContainer = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: center;
+
+  /* Chrome, Safari, Edge, Opera */
+  input::-webkit-outer-spin-button,
+  input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  /* Firefox */
+  input[type=number] {
+  -moz-appearance: textfield;
+}
+`
 
 export default App;
