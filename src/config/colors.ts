@@ -6,3 +6,5 @@ export const orange05 = "#FFEED4";
 export const gray20 = "#696969";
 export const gray18 = "#B9B9B9";
 export const gray14 = "#DBDBDB";
+
+export const givewell = "#669bb5";

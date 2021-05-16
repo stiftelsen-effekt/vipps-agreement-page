@@ -29,8 +29,8 @@ export function ToolTipIcon() {
       fill="currentColor"
       strokeWidth={0}
       viewBox="0 0 16 16"
-      height="14px"
-      width="14px"
+      height="10px"
+      width="10px"
     >
       <path
         fillRule="evenodd"

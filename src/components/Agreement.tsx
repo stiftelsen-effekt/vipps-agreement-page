@@ -3,6 +3,8 @@ import fetch from 'node-fetch';
 import moment from 'moment'
 import { SharesSelection } from './ShareSelection';
 import styled from 'styled-components';
+import formatCurrency from '../helpers/currency'
+import { SharesDisplay } from './ShareDisplay/ShareDisplay';
 
  
 interface Agreement {
@@ -19,13 +21,12 @@ interface Donor {
 
 export function Agreement() {
     const [agreementAmount, setAgreementAmount] = useState<Number>(0)
-    const [KID, setKID] = useState<string>()
+    const [KID, setKID] = useState<string>("")
     const [distribution, setDistribution] = useState()
     const [donorID, setDonorID] = useState<number>()
     const [donorName, setDonorName] = useState<string>()
     const [nextChargeDate, setNextChargeDate] = useState<string>("")
 
-    // try res without json
     useEffect(() => {
         fetch('http://localhost:3000/vipps/agreement/agr_fKt6UEn')
             .then(res => res.json())
@@ -86,24 +87,25 @@ export function Agreement() {
     return (
         <AgreementWrapper>
             <div>
-                <Title>Din Vipps månedlige betalingsavtale</Title>
+                <Title>Din månedlige Vipps betalingsavtale</Title>
                 <Table>
                     <tbody>
                         <tr>
                             <td>Sum per måned:</td>
-                            <RightCell>{agreementAmount}</RightCell>
+                            <RightCell>{formatCurrency(agreementAmount.toString())} kr</RightCell>
                         </tr>
                         <tr>
                             <td>Neste trekkdato:</td>
                             <RightCell>{nextChargeDate}</RightCell>
                         </tr>
                         <tr>
-                            <td>KID-nummer</td>
+                            <td>KID-nummer:</td>
                             <RightCell>{KID}</RightCell>
                         </tr>
                     </tbody>
                 </Table>
                 <ShareTitle>Din fordeling</ShareTitle>
+                <SharesDisplay/>
             </div>
             <SharesWrapper>
                 <SharesSelection />
@@ -113,7 +115,7 @@ export function Agreement() {
 }
 
 const AgreementWrapper = styled.div`
-    width: 700px;
+    width: 750px;
     display: flex;
     flex-direction: row;
     padding: 20px;
@@ -123,7 +125,7 @@ const AgreementWrapper = styled.div`
     }
 `
 
-const ShareTitle = styled.p`
+const ShareTitle = styled.h4`
     padding-bottom: 4px;
     border-bottom: 1px solid black;
 `
@@ -138,7 +140,7 @@ const RightCell = styled.td`
 `
 
 const SharesWrapper = styled.div`
-    margin-left: 20px;
+    margin-left: 40px;
     width: 350px;
 
     @media only screen and (max-width: 750px) {

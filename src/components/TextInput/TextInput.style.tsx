@@ -22,12 +22,12 @@ export interface TextInputWrapperProps {
 export const TextInputWrapper = styled.div`
   display: block;
   margin-bottom: 5px;
-  font-size: 15px;
+  font-size: 12px;
   border: 1px solid ${gray18};
   border-radius: 5px;
   box-sizing: border-box;
   position: relative;
-  height: 60px;
+  height: 40px;
   z-index: 1;
 
   ${(props: TextInputWrapperProps) => {
@@ -59,7 +59,7 @@ export const TextInputWrapper = styled.div`
 export const TextInputField = styled.input`
   z-index: 1;
   font-size: inherit;
-  padding: 20px;
+  padding: 12px;
   ${(props: TextInputProps) => {
     if (props.denomination) {
       return `
@@ -87,9 +87,10 @@ export const TextInputField = styled.input`
 
 export const ComputerInputLabel = styled.p`
   display: inline-block;
-  padding: 5px;
   padding-left: 15px;
+  padding-right: 5px;
   font-weight: bold;
+  font-size: 12px;
 
   @media only screen and (max-width: 385px) {
     font-size: 13px;
