@@ -92,11 +92,6 @@ export const ComputerInputLabel = styled.p`
   font-weight: bold;
   font-size: 12px;
 
-  @media only screen and (max-width: 385px) {
-    font-size: 13px;
-    padding-top: 10px;
-  }
-
   @media only screen and (max-width: 355px) {
     display: none;
   }
@@ -104,20 +99,12 @@ export const ComputerInputLabel = styled.p`
 
 export const MobileInputLabel = styled.p`
   display: inline-block;
-  padding: 5px;
   padding-left: 15px;
+  padding-right: 5px;
   font-weight: bold;
-  padding-top: 10px;
-  font-size: 14px;
   display: none;
 
   @media only screen and (max-width: 355px) {
     display: inline-block;
-  }
-
-  @media only screen and (max-width: 355px) {
-    display: inline-block;
-    font-size: 11px;
-    padding-top: 12px;
   }
 `;

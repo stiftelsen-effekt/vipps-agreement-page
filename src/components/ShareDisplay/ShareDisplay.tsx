@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react"
 import { API_URL } from "../../config/api"
 import { PieChart } from "react-minimal-pie-chart"
+import styled from "styled-components";
 
 interface Split {
 	ID: number;
@@ -39,9 +40,18 @@ export const SharesDisplay: React.FC = () => {
 
 	return (
 		<div>
-            {splits?.map(split => {
-                return <p>{split.full_name} - {parseInt(split.percentage_share).toFixed(2)}%</p>
-            })}
+            <table style={{width: "100%"}}>
+                <tbody>
+                    {splits?.map(split => {
+                        return (
+                            <tr>
+                                <td>{split.full_name}</td>
+                                <RightCell>{parseInt(split.percentage_share).toFixed(2)}%</RightCell>
+                            </tr>
+                        )
+                    })}
+                </tbody>
+            </table>
 			{/* <PieChart
                 label={({ dataEntry }) => Math.round(dataEntry.percentage) + '%'}
                 labelStyle={labelStyle}
@@ -54,3 +64,11 @@ export const SharesDisplay: React.FC = () => {
 		</div>
 	);
 };
+
+const RightCell = styled.td`
+    text-align: right;
+`
+
+const ShareText = styled.p`
+    margin: 4px;
+`

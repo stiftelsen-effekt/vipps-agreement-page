@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import styled from "styled-components";
 import Validator from "validator";
 import { API_URL } from "../config/api";
 import { RedFont } from "./ShareSelection.style";
@@ -28,7 +29,7 @@ export const SharesSelection: React.FC = () => {
 	const [sumPercentage, setSumPercentage] = useState<number>()
 
 	useEffect(() => {
-		fetch(`${API_URL}/organizations/active`)
+		fetch(`http://localhost:3000/organizations/active`)
 			.then(res => res.json())
 			.then((json: OrganizationResponse) => {
 				console.log(json.content)
@@ -51,7 +52,7 @@ export const SharesSelection: React.FC = () => {
 	if (!organizations) return <div>Ingen organisasjoner</div>
 
 	return (
-		<div>
+		<Wrapper>
 			<div>
 				{shares && shares.map((share: Share) => (
 					<div key={share.orgId}>
@@ -85,6 +86,15 @@ export const SharesSelection: React.FC = () => {
 				))}
 			</div>
 			{sumPercentage === 100 ? null :<RedFont>{`Du har fordelt ${sumPercentage} av 100 prosent`}</RedFont>}
-		</div>
+		</Wrapper>
 	);
 };
+
+const Wrapper = styled.div`
+	margin-top: 20px;
+	width: 300px;
+
+	@media only screen and (max-width: 355px) {
+		width: 250px;
+  	}
+`
