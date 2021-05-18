@@ -44,9 +44,9 @@ export const SharesDisplay: React.FC = () => {
                 <tbody>
                     {splits?.map(split => {
                         return (
-                            <tr>
-                                <td>{split.full_name}</td>
-                                <RightCell>{parseInt(split.percentage_share).toFixed(2)}%</RightCell>
+                            <tr key={splits.indexOf(split)}>
+                                <LeftCell>{split.full_name}</LeftCell>
+                                <RightCell>{parseInt(split.percentage_share).toFixed(0)}%</RightCell>
                             </tr>
                         )
                     })}
@@ -65,8 +65,16 @@ export const SharesDisplay: React.FC = () => {
 	);
 };
 
+const LeftCell = styled.td`
+    padding-right: 20px;
+    font-size: 14px;
+    font-family: 'Roboto',Arial,sans-serif;
+`
+
 const RightCell = styled.td`
     text-align: right;
+    font-size: 14px;
+    font-family: 'Roboto',Arial,sans-serif;
 `
 
 const ShareText = styled.p`

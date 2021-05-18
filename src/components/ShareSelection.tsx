@@ -91,10 +91,6 @@ export const SharesSelection: React.FC = () => {
 };
 
 const Wrapper = styled.div`
-	margin-top: 20px;
-	width: 300px;
-
-	@media only screen and (max-width: 355px) {
-		width: 250px;
-  	}
+	margin-top: 10px;
+	width: 100%;
 `

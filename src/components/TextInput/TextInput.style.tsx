@@ -27,7 +27,7 @@ export const TextInputWrapper = styled.div`
   border-radius: 5px;
   box-sizing: border-box;
   position: relative;
-  height: 40px;
+  height: 50px;
   z-index: 1;
 
   ${(props: TextInputWrapperProps) => {
@@ -58,8 +58,8 @@ export const TextInputWrapper = styled.div`
 
 export const TextInputField = styled.input`
   z-index: 1;
-  font-size: inherit;
-  padding: 12px;
+  font-size: 14px;
+  padding: 16px;
   ${(props: TextInputProps) => {
     if (props.denomination) {
       return `
@@ -89,10 +89,9 @@ export const ComputerInputLabel = styled.p`
   display: inline-block;
   padding-left: 15px;
   padding-right: 5px;
-  font-weight: bold;
-  font-size: 12px;
+  font-size: 14px;
 
-  @media only screen and (max-width: 355px) {
+  @media only screen and (max-width: 370px) {
     display: none;
   }
 `;
@@ -101,10 +100,10 @@ export const MobileInputLabel = styled.p`
   display: inline-block;
   padding-left: 15px;
   padding-right: 5px;
-  font-weight: bold;
+  font-size: 14px;
   display: none;
 
-  @media only screen and (max-width: 355px) {
+  @media only screen and (max-width: 370px) {
     display: inline-block;
   }
 `;
