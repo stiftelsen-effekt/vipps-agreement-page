@@ -50,7 +50,7 @@ export const ButtonWrapper = styled.div`
     width: 100%;
     display: flex;
     justify-content: space-between;
-    margin-top: 10px;
+    margin-top: 20px;
 
     @media only screen and (max-width: 500px) {
         flex-direction: column-reverse;

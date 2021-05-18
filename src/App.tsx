@@ -36,7 +36,11 @@ const EffektLogo = styled.img`
   width: 100px;
   height: auto;
   position: absolute;
-  left: 0;
+  left: 30px;
+
+  &:hover {
+    cursor: pointer;
+  }
 
   @media only screen and (max-width: 900px) {
       position: relative;

@@ -29,7 +29,7 @@ export const SharesSelection: React.FC = () => {
 	const [sumPercentage, setSumPercentage] = useState<number>()
 
 	useEffect(() => {
-		fetch(`http://localhost:3000/organizations/active`)
+		fetch(`${API_URL}/organizations/active`)
 			.then(res => res.json())
 			.then((json: OrganizationResponse) => {
 				console.log(json.content)

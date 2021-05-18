@@ -10,6 +10,7 @@ import { LoadingCircle } from '../Shared/LoadingCircle/LoadingCircle'
 import { BlackButton, Button} from '../Shared/Buttons/Buttons.style'
 import vipps_logo from '../../images/vipps_logo.svg'
 import { TextInput } from '../TextInput/TextInput'
+import { API_URL } from '../../config/api'
 
 interface Agreement {
     amount: number;
@@ -45,7 +46,7 @@ export function AgreementInfo() {
     const [donorName, setDonorName] = useState<string>()
     const [nextChargeDate, setNextChargeDate] = useState<string>("")
 
-    const agreementRequest = useFetch<Agreement>(`http://localhost:3000/vipps/agreement/${agreementID}`);
+    const agreementRequest = useFetch<Agreement>(`${API_URL}/vipps/agreement/${agreementID}`);
 
     useEffect(() => {
         const response = agreementRequest.data

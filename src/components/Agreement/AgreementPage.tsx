@@ -10,6 +10,7 @@ import { LoadingCircle } from '../Shared/LoadingCircle/LoadingCircle'
 import { BlackButton, Button} from '../Shared/Buttons/Buttons.style'
 import { TextInput } from '../TextInput/TextInput'
 import { AgreementInfo } from './AgreementInfo'
+import { API_URL } from '../../config/api'
 
 enum Inputs {
 	SHARES,
@@ -22,10 +23,21 @@ enum Inputs {
 
 // Extract the agreement code from the url
 const urlSplit = window.location.href.split("/")
-const agreementID = urlSplit[urlSplit.length-1]
+const agreementId = urlSplit[urlSplit.length-1]
+
+function updatePrice(price: string) {
+    const body = { agreementId: agreementId, price: price};
+    
+    fetch(`${API_URL}/vipps/agreement/price`, {
+        method: 'put',
+        body:    JSON.stringify(body),
+        headers: { 'Content-Type': 'application/json' },
+    })
+}
 
 export function AgreementPage() {
     const [showInput, setShowInput] = useState<Inputs>(Inputs.NONE) // Rename to pages
+    const [price, setPrice] = useState<string>("")
     
     return (
         <AgreementWrapper>
@@ -50,14 +62,22 @@ export function AgreementPage() {
                             name="sum"
                             type="tel"
                             placeholder="0"
-                            defaultValue="0"
+                            defaultValue=""
+                            onChange={(e) => {
+                                const øre = (parseInt(e.currentTarget.value) * 100).toString()
+                                setPrice(øre)
+                                console.log(øre)
+                            }}
                         />
                     </div>
                     <ButtonWrapper>
                         <Button onClick={() => setShowInput(Inputs.NONE)}>
                             Avbryt
                         </Button>
-                        <Button onClick={() => setShowInput(Inputs.NONE)}>
+                        <Button onClick={() => {
+                            setShowInput(Inputs.NONE)
+                            updatePrice(price)
+                        }}>
                             Lagre sum
                         </Button>
                     </ButtonWrapper>
@@ -80,6 +100,7 @@ export function AgreementPage() {
             {showInput === Inputs.DATE &&
                 <SharesWrapper>
                     <ShareTitle>Velg ny trekkdato</ShareTitle>
+
                     <ButtonWrapper>
                         <Button onClick={() => setShowInput(Inputs.NONE)}>
                             Avbryt
