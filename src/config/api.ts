@@ -6,4 +6,4 @@ if (process.env.VIPPS_AGREEMENT_PAGE_API_URL) {
   apiUrl = "https://dev.data.gieffektivt.no";
 }
 
-export const API_URL = "http://localhost:3000";
+export const API_URL = "http://localhost:3000"; //Temporary

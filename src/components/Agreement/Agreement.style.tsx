@@ -7,7 +7,6 @@ export const AgreementWrapper = styled.div`
     display: flex;
     flex-direction: column;
     padding: 20px;
-    justify-content: center;
     box-shadow: 0px 3px 6px 0 rgba(0, 0, 0, 0.15);
     margin: 20px;
 
@@ -26,6 +25,7 @@ export const ShareTitle = styled.h4`
     padding-bottom: 4px;
     border-bottom: 1px solid black;
     margin-bottom: 10px;
+    margin-top: 10px;
     width: 100%;
     font-family: 'Roboto',Arial,sans-serif;
 `
@@ -81,6 +81,34 @@ export const SumInputWrapper = styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
+    font-family: 'Roboto',Arial,sans-serif;
+`
+
+export const InfoText = styled.p`
+    margin: 0;
+    margin-top: 5px;
+    text-align: left;
+    font-size: 12px;
+    width: 100%;
+    font-family: 'Roboto',Arial,sans-serif;
+`
+
+export const ErrorText = styled.p`
+    margin: 0;
+    text-align: left;
+    color: red;
+    font-size: 12px;
+    width: 100%;
+    margin-top: 5px;
+    font-family: 'Roboto',Arial,sans-serif;
+`
+
+export const ConfirmationText = styled.p`
+    margin-top: 10px;
+    margin-bottom: 5px;
+    font-size: 16px;
+    font-family: 'Roboto',Arial,sans-serif;
+    width: 100%;
 `
 
 export const CancelWrapper = styled.div`

@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from 'react'
 import fetch from 'node-fetch'
 import moment from 'moment'
-import { SharesSelection } from '../ShareSelection'
+import { SharesSelection } from '../ShareSelection/ShareSelection'
 import formatCurrency from '../../helpers/currency'
 import { SharesDisplay } from '../ShareDisplay/ShareDisplay'
 import useFetch from "react-fetch-hook"
 import { AgreementWrapper, Title, Table, RightCell, ShareTitle, ButtonWrapper, SumInputWrapper, StyledSumInput, SharesWrapper, CancelWrapper, NavigationWrapper, VippsLogo, LeftCell } from './Agreement.style'
-import { LoadingCircle } from '../Shared/LoadingCircle/LoadingCircle'
 import { BlackButton, Button} from '../Shared/Buttons/Buttons.style'
 import vipps_logo from '../../images/vipps_logo.svg'
 import { TextInput } from '../TextInput/TextInput'

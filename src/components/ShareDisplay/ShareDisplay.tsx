@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react"
 import { API_URL } from "../../config/api"
 import { PieChart } from "react-minimal-pie-chart"
 import styled from "styled-components";
+import { Share } from "../ShareSelection/ShareSelection";
 
 interface Split {
 	ID: number;
@@ -9,30 +10,25 @@ interface Split {
     percentage_share: string;
 }
 
-const labelStyle = {
-    fontSize: '5px',
-    fontFamily: 'sans-serif',
-  };
+// Pie chart
+// const labelStyle = {
+//     fontSize: '5px',
+//     fontFamily: 'sans-serif',
+// };
 
-export const SharesDisplay: React.FC = () => {
+interface Props {
+    KID: string;
+}
+
+// Consider putting shares in as
+export const SharesDisplay: React.FC<Props> = ({KID}) => {
 	const [splits, setSplits] = useState<Split[]>()
-    const [KID, setKID] = useState("")
-
-    useEffect(() => {
-        fetch('http://localhost:3000/vipps/agreement/agr_fKt6UEn')
-            .then(res => res.json())
-            .then((json) => {
-                console.log(json)
-                setKID(json.KID)
-            })
-    }, [])
 
 	useEffect(() => {
         if (KID) {
-            fetch(`http://localhost:3000/distributions/without/donor/${KID}`) //TODO: Replace with API_URL
+            fetch(`${API_URL}/distributions/without/donor/${KID}`)
                 .then(res => res.json())
                 .then((json: Split[]) => {
-                    console.log(json)
                     setSplits(json)
                 })
         }
@@ -42,6 +38,10 @@ export const SharesDisplay: React.FC = () => {
 		<div>
             <table style={{width: "100%"}}>
                 <tbody>
+                    <tr>
+                        <LeftCell>Fordelings-ID:</LeftCell>
+                        <RightCell>{KID}</RightCell>
+                    </tr>
                     {splits?.map(split => {
                         return (
                             <tr key={splits.indexOf(split)}>
