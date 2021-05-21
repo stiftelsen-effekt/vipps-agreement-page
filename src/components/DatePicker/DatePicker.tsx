@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { orange20 } from "../../config/colors";
-import { getNextChargeDate } from "../../helpers/dates";
+import { getNextChargeDate, isThreeDaysAhead } from "../../helpers/dates";
 import { updateChargeDay } from "../../helpers/requests";
 import { ButtonWrapper } from "../Agreement/Agreement.style";
 import { Agreement, Changes, Pages } from "../Agreement/AgreementPage";
@@ -24,6 +24,7 @@ export const DatePicker: React.FC<Props> = ({agreement, agreementCode, setNewCha
 	}, [agreement])
 
 	useEffect(() => {
+		isThreeDaysAhead(getNextChargeDate(selectedChargeDay.toString()) || "")
 		setNewChargeDate(getNextChargeDate(selectedChargeDay.toString()) || "")
 	}, [selectedChargeDay])
 
@@ -42,7 +43,7 @@ export const DatePicker: React.FC<Props> = ({agreement, agreementCode, setNewCha
 
 	return (
 		<Wrapper>
-			<DateText>Velg hvilken dag av måneden du trekkes</DateText>
+			<DateText>Velg hvilken dag av måneden du vil trekkes</DateText>
 			{dateBoxes.map(box => {return box})}
 			<DateText>Neste trekkdato blir: {newChargeDate}</DateText>
 			<ButtonWrapper>

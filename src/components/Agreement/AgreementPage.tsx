@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react'
-import { SharesSelection } from '../ShareSelection/ShareSelection'
 import formatCurrency from '../../helpers/currency'
-import { AgreementWrapper, Title, ShareTitle, ButtonWrapper, SumInputWrapper, SharesWrapper, CancelWrapper, NavigationWrapper, InfoText, ErrorText, ConfirmationText, VippsLogo } from './Agreement.style'
+import { AgreementWrapper, Title, ShareTitle, ButtonWrapper, SumInputWrapper, SharesWrapper, CancelWrapper, NavigationWrapper, InfoText, ErrorText, ConfirmationText } from './Agreement.style'
 import { LoadingCircle } from '../Shared/LoadingCircle/LoadingCircle'
 import { BlackButton, Button} from '../Shared/Buttons/Buttons.style'
 import { TextInput } from '../TextInput/TextInput'
@@ -12,7 +11,7 @@ import { DatePicker } from '../DatePicker/DatePicker'
 import { API_URL } from '../../config/api'
 import useFetch from "react-fetch-hook"
 import { getNextChargeDate } from '../../helpers/dates'
-import vipps_logo from '../../images/vipps_logo.svg'
+import { SharesSelection } from '../ShareSelection/ShareSelection'
 
 export enum Pages {
 	SHARES,
@@ -162,7 +161,7 @@ export function AgreementPage() {
                     {confirmChange === Changes.SUM && (
                         <div>
                             <Title>Avtalesummen din er nå endret</Title>
-                            <ConfirmationText><b>Ny sum:</b> {formatCurrency((parseInt(inputPrice)/100).toString())}kr</ConfirmationText>
+                            <ConfirmationText><b>Ny sum:</b> {formatCurrency((parseInt(inputPrice)/100).toString())}kr per måned</ConfirmationText>
                         </div>
                     )}
                     {confirmChange === Changes.SHARES && (

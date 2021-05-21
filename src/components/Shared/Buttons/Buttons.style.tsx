@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { gray20, orange15 } from "../../../config/colors";
+import { orange15 } from "../../../config/colors";
 
 export const BlackButton = styled.button`
   height: 45px;

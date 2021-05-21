@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from "react"
 import { API_URL } from "../../config/api"
-import { PieChart } from "react-minimal-pie-chart"
 import styled from "styled-components";
-import { Share } from "../ShareSelection/ShareSelection";
 
 interface Split {
 	ID: number;
@@ -75,8 +73,4 @@ const RightCell = styled.td`
     text-align: right;
     font-size: 14px;
     font-family: 'Roboto',Arial,sans-serif;
-`
-
-const ShareText = styled.p`
-    margin: 4px;
 `
