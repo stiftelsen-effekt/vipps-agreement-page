@@ -20,7 +20,7 @@ export enum Pages {
     CANCEL,
     CANCELLED,
     DATE,
-    CONFIRMATION
+    CONFIRMATION // Divide confirmation into CONFIRMSUM, etc.
 }
 
 export enum Changes {
@@ -94,6 +94,7 @@ export function AgreementPage() {
                             type="number"
                             placeholder="0"
                             defaultValue={inputPrice}
+                            selectOnClick
                             onChange={(e) => {
                                 const øre = (parseInt(e.currentTarget.value) * 100).toString()
                                 setInputPrice(øre)

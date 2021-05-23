@@ -1,15 +1,6 @@
 import { Share } from "../components/ShareSelection/ShareSelection";
 import { API_URL } from "../config/api";
 
-// Not in use
-export function getDistributionByKID(KID: string) {
-    fetch(`${API_URL}/distributions/without/donor/${KID}`)
-        .then(res => res.json())
-        .then((json) => {
-            console.log(json)
-    })
-}
-
 export function updatePrice(agreementCode: string, price: string) {
     const body = { agreementCode, price};
     
