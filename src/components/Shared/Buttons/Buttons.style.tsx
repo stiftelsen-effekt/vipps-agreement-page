@@ -7,6 +7,7 @@ export const BlackButton = styled.button`
   color: white;
   font-weight: 600;
   font-size: 14px;
+  margin-top: 20px;
   display: flex;
   align-items: center;
   justify-content: center;

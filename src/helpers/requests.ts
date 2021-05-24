@@ -36,3 +36,10 @@ export function updateChargeDay(agreementCode: string, chargeDay: number) {
         headers: { 'Content-Type': 'application/json' },
     })
 }
+
+export function cancelAgreement(agreementCode: string) {
+    fetch(`${API_URL}/vipps/agreement/cancel/${agreementCode}`, {
+        method: 'put',
+        headers: { 'Content-Type': 'application/json' },
+    })
+}

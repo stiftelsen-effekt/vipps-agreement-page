@@ -1,18 +1,18 @@
 import React, { useEffect, useState } from 'react'
 import formatCurrency from '../../helpers/currency'
-import { AgreementWrapper, Title, ShareTitle, ButtonWrapper, SumInputWrapper, SharesWrapper, CancelWrapper, NavigationWrapper, InfoText, ErrorText, ConfirmationText } from './Agreement.style'
+import { AgreementWrapper, Title, ShareTitle, ButtonWrapper, SumInputWrapper, SharesWrapper, CancelWrapper, NavigationWrapper, InfoText, ErrorText, ConfirmationText, VippsLogo } from './Agreement.style'
 import { LoadingCircle } from '../Shared/LoadingCircle/LoadingCircle'
 import { BlackButton, Button} from '../Shared/Buttons/Buttons.style'
 import { TextInput } from '../TextInput/TextInput'
 import { AgreementInfo } from './AgreementInfo'
-import { updatePrice } from '../../helpers/requests'
+import { cancelAgreement, updatePrice } from '../../helpers/requests'
 import { SharesDisplay } from '../ShareDisplay/ShareDisplay'
 import { DatePicker } from '../DatePicker/DatePicker'
 import { API_URL } from '../../config/api'
 import useFetch from "react-fetch-hook"
 import { getNextChargeDate } from '../../helpers/dates'
 import { SharesSelection } from '../ShareSelection/ShareSelection'
-
+import vipps_logo from '../../images/vipps_logo.svg'
 export enum Pages {
 	SHARES,
 	AMOUNT,
@@ -20,7 +20,8 @@ export enum Pages {
     CANCEL,
     CANCELLED,
     DATE,
-    CONFIRMATION // Divide confirmation into CONFIRMSUM, etc.
+    CONFIRMATION,
+    PAUSE // Divide confirmation into CONFIRMSUM, etc.
 }
 
 export enum Changes {
@@ -44,13 +45,14 @@ const urlSplit = window.location.href.split("/")
 const agreementCode = urlSplit[urlSplit.length-1]
 
 export function AgreementPage() {
-    const agreementRequest = useFetch<Agreement>(`${API_URL}/vipps/agreement/urlcode/${agreementCode}`);
+    const agreementRequest = useFetch<Agreement>(`${API_URL}/vipps/agreement/urlcode/${agreementCode || "empty"}`);
     const [agreement, setAgreement] = useState<Agreement>()
     const [nextChargeDate, setNextChargeDate] = useState<string>("")
     const [newChargeDay, setNewChargeDay] = useState<string>("")
     const [currentPage, setCurrentPage] = useState<Pages>(Pages.NONE)
     const [inputPrice, setInputPrice] = useState<string>("")
     const [invalidPrice, setInvalidPrice] = useState<boolean>(false)
+    const [pauseDate, setPauseDate] = useState<Date>(new Date())
     const [confirmChange, setConfirmChange] = useState<Changes>(Changes.NONE)
     const [showLoading, setShowLoading] = useState<boolean>(false)
     const [KID, setKID] = useState<string>("")
@@ -63,8 +65,19 @@ export function AgreementPage() {
         }
     }, [agreementRequest.data])
 
+
     if (agreementRequest.isLoading || showLoading) return <AgreementWrapper><LoadingCircle/></AgreementWrapper>
-    
+    if (agreementRequest.data?.status === "STOPPED" || !agreementRequest.data) return (
+        <AgreementWrapper>
+            <div>
+                <VippsLogo src={vipps_logo}/>
+                <ShareTitle>Denne avtalen er avsluttet eller finnes ikke</ShareTitle>
+                <p>Du kan starte en ny avtale på gieffektivt.no</p>
+                <BlackButton onClick={() => window.location.replace("https://gieffektivt.no")}>Gå til gieffektivt.no</BlackButton>
+            </div>
+        </AgreementWrapper>
+    )
+       
     return (
         <AgreementWrapper>
             {currentPage !== Pages.CONFIRMATION && 
@@ -77,6 +90,7 @@ export function AgreementPage() {
                         <Button onClick={() => setCurrentPage(Pages.SHARES)}>Endre fordeling</Button>
                         <Button onClick={() => setCurrentPage(Pages.DATE)}>Endre trekkdag</Button>
                     </ButtonWrapper>
+                    <BlackButton onClick={() => setCurrentPage(Pages.PAUSE)}>Sett på pause</BlackButton>
                     <BlackButton onClick={() => setCurrentPage(Pages.CANCEL)}>Avslutt avtale</BlackButton>
                 </NavigationWrapper>
             }
@@ -147,8 +161,24 @@ export function AgreementPage() {
                     <ShareTitle>Avslutter avtale</ShareTitle>
                     <p>Er du sikker på at du vil avslutte avtalen?</p>
                     <ButtonWrapper>
-                        <Button onClick={() => setCurrentPage(Pages.NONE)}>Gå tilbake</Button>
-                        <Button style={{backgroundColor: "black", color: "white"}} onClick={() => setCurrentPage(Pages.CANCELLED)}>Avslutt avtale</Button>
+                        <Button onClick={() =>  setCurrentPage(Pages.NONE)}>Gå tilbake</Button>
+                        <Button style={{backgroundColor: "black", color: "white"}} onClick={() => {
+                            cancelAgreement(agreementCode)
+                            setCurrentPage(Pages.CANCELLED)}
+                        }>Avslutt avtale</Button>
+                    </ButtonWrapper>
+                </CancelWrapper>
+            }
+            {currentPage === Pages.PAUSE &&
+                <CancelWrapper>
+                    <ShareTitle>Setter avtale på pause</ShareTitle>
+                    <p>Velg fortsettelsesdato</p>
+                    <ButtonWrapper>
+                        <Button onClick={() =>  setCurrentPage(Pages.NONE)}>Gå tilbake</Button>
+                        <Button style={{backgroundColor: "black", color: "white"}} onClick={() => {
+                            cancelAgreement(agreementCode)
+                            setCurrentPage(Pages.CANCELLED)}
+                        }>Avslutt avtale</Button>
                     </ButtonWrapper>
                 </CancelWrapper>
             }

@@ -19,7 +19,7 @@ export const AgreementInfo: React.FC<Props> = ({agreement, nextChargeDate}) => {
                 <tbody>
                     <tr>
                         <LeftCell>Sum per måned:</LeftCell>
-                        <RightCell>{formatCurrency(agreement ? agreement.amount.toString() : "")} kr</RightCell>
+                        <RightCell>{formatCurrency(agreement?.amount ? agreement.amount.toString() : "")} kr</RightCell>
                     </tr>
                     <tr>
                         <LeftCell>Trekkdag:</LeftCell>
