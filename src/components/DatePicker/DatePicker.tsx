@@ -24,7 +24,7 @@ export const DatePicker: React.FC<Props> = ({agreement, agreementCode, setNewCha
 	}, [agreement])
 
 	useEffect(() => {
-		isThreeDaysAhead(getNextChargeDate(selectedChargeDay.toString()) || "")
+		isThreeDaysAhead(getNextChargeDate(selectedChargeDay.toString()) || "") //Whats this???
 		setNewChargeDate(getNextChargeDate(selectedChargeDay.toString()) || "")
 	}, [selectedChargeDay])
 
@@ -45,6 +45,16 @@ export const DatePicker: React.FC<Props> = ({agreement, agreementCode, setNewCha
 		<Wrapper>
 			<DateText>Velg hvilken dag av måneden du vil trekkes</DateText>
 			{dateBoxes.map(box => {return box})}
+			<Datebox 
+				key="0"
+				style={{
+					backgroundColor: selectedChargeDay === 0 ? orange20 : "white",
+					width: "80px"
+				}}
+				onClick={() => setSelectedChargeDay(0)}
+			>
+				Siste dag
+			</Datebox>
 			<DateText>Neste trekkdato blir: {newChargeDate}</DateText>
 			<ButtonWrapper>
 				<Button onClick={() => setCurrentPage(Pages.NONE)}>
