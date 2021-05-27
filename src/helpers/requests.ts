@@ -53,3 +53,13 @@ export async function pauseAgreement(agreementCode: string, pausedUntilDate: Dat
         headers: { 'Content-Type': 'application/json' },
     })
 }
+
+export async function unPauseAgreement(agreementCode: string) {
+    const body = {agreementCode}
+
+    fetch(`${API_URL}/vipps/agreement/pause/end`, {
+        method: 'put',
+        body:    JSON.stringify(body),
+        headers: { 'Content-Type': 'application/json' },
+    })
+}

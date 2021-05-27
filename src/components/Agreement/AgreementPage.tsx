@@ -5,12 +5,12 @@ import { LoadingCircle } from '../Shared/LoadingCircle/LoadingCircle'
 import { BlackButton, Button} from '../Shared/Buttons/Buttons.style'
 import { TextInput } from '../TextInput/TextInput'
 import { AgreementInfo } from './AgreementInfo'
-import { cancelAgreement, pauseAgreement, updatePrice } from '../../helpers/requests'
+import { cancelAgreement, pauseAgreement, unPauseAgreement, updatePrice } from '../../helpers/requests'
 import { SharesDisplay } from '../ShareDisplay/ShareDisplay'
 import { DatePicker } from '../DatePicker/DatePicker'
 import { API_URL } from '../../config/api'
 import useFetch from "react-fetch-hook"
-import { getNextChargeDate } from '../../helpers/dates'
+import { calculateNextChargeDay, formatDate, getNextChargeDate } from '../../helpers/dates'
 import { SharesSelection } from '../ShareSelection/ShareSelection'
 import vipps_logo from '../../images/vipps_logo.svg'
 import { MonthPicker } from '../MonthPicker/MonthPicker'
@@ -21,6 +21,7 @@ export enum Pages {
 	SHARES,
 	AMOUNT,
     PAUSE,
+    UNPAUSE,
     CANCEL,
     CHARGEDAY,
     CONFIRM_PAUSE,
@@ -43,6 +44,7 @@ export interface Agreement {
     chargeDayOfMonth: string;
     KID: string;
     donorID: number;
+    paused_until_date: string;
 }
 
 // Extract the agreement code from the url
@@ -52,6 +54,7 @@ const agreementCode = urlSplit[urlSplit.length-1]
 export function AgreementPage() {
     const agreementRequest = useFetch<Agreement>(`${API_URL}/vipps/agreement/urlcode/${agreementCode || "none"}`);
     const [agreement, setAgreement] = useState<Agreement>()
+    const [paused, setPaused] = useState<boolean>(false)
     const [nextChargeDate, setNextChargeDate] = useState<string>("")
     const [newChargeDay, setNewChargeDay] = useState<string>("")
     const [currentPage, setCurrentPage] = useState<Pages>(Pages.HOME)
@@ -66,6 +69,11 @@ export function AgreementPage() {
             setAgreement(agreementRequest.data)
             setKID(agreementRequest.data.KID)
             setNextChargeDate(getNextChargeDate(agreementRequest.data.chargeDayOfMonth))
+
+            // if agreement is currently paused
+            if (new Date(agreementRequest.data.paused_until_date) > new Date()) {
+                setPaused(true)
+            }
         }
     }, [agreementRequest.data])
 
@@ -87,15 +95,23 @@ export function AgreementPage() {
             {currentPage === Pages.HOME && 
                 <div>
                     <AgreementInfo agreement={agreement} nextChargeDate={nextChargeDate}/>
-                    <NavigationWrapper>
-                        <ButtonWrapper>
-                            <Button onClick={() => setCurrentPage(Pages.AMOUNT)}>Endre sum</Button>
-                            <Button onClick={() => setCurrentPage(Pages.SHARES)}>Endre fordeling</Button>
-                            <Button onClick={() => setCurrentPage(Pages.CHARGEDAY)}>Endre trekkdag</Button>
-                        </ButtonWrapper>
-                        <BlackButton onClick={() => setCurrentPage(Pages.PAUSE)}>Sett på pause</BlackButton>
-                        <BlackButton onClick={() => setCurrentPage(Pages.CANCEL)}>Avslutt avtale</BlackButton>
-                    </NavigationWrapper>
+                    {paused ?
+                        <div>
+                            <ShareTitle>Denne avtalen er satt på pause til {calculateNextChargeDay(agreement?.paused_until_date)}</ShareTitle>
+                            <BlackButton onClick={() => setCurrentPage(Pages.UNPAUSE)}>Gjenstart avtale nå</BlackButton>
+                            <BlackButton onClick={() => setCurrentPage(Pages.CANCEL)}>Avslutt avtale</BlackButton>
+                        </div>
+                    :
+                        <NavigationWrapper>
+                            <ButtonWrapper>
+                                <Button onClick={() => setCurrentPage(Pages.AMOUNT)}>Endre sum</Button>
+                                <Button onClick={() => setCurrentPage(Pages.SHARES)}>Endre fordeling</Button>
+                                <Button onClick={() => setCurrentPage(Pages.CHARGEDAY)}>Endre trekkdag</Button>
+                            </ButtonWrapper>
+                            <BlackButton onClick={() => setCurrentPage(Pages.PAUSE)}>Sett på pause</BlackButton>
+                            <BlackButton onClick={() => setCurrentPage(Pages.CANCEL)}>Avslutt avtale</BlackButton>
+                        </NavigationWrapper>
+                    }
                 </div>
             }
             {currentPage === Pages.AMOUNT && 
@@ -189,11 +205,28 @@ export function AgreementPage() {
                         <ShareTitle>Setter avtale på pause</ShareTitle>
                         <MonthPicker chargeDay={agreement?.chargeDayOfMonth || ""} setPausedUntilDate={(date: Date) => setPausedUntilDate(date)} />
                         <ButtonWrapper>
-                            <Button onClick={() =>  setCurrentPage(Pages.HOME)}>Gå tilbake</Button>
+                            <Button onClick={() => setCurrentPage(Pages.HOME)}>Gå tilbake</Button>
                             <Button style={{backgroundColor: "black", color: "white"}} onClick={() => {
                                 pauseAgreement(agreementCode, pausedUntilDate)
                                 setCurrentPage(Pages.CONFIRM_PAUSE)}
                             }>Sett på pause</Button>
+                        </ButtonWrapper>
+                    </CancelWrapper>
+                </div>
+            }
+            {currentPage === Pages.UNPAUSE &&
+                <div>
+                    <AgreementInfo agreement={agreement} nextChargeDate={nextChargeDate}/>
+                    <CancelWrapper>
+                        <ShareTitle>Gjenstarter avtale</ShareTitle>
+                        <p>Neste trekk etter gjenstart blir den {nextChargeDate}</p>
+                        <ButtonWrapper>
+                            <Button onClick={() => setCurrentPage(Pages.HOME)}>Gå tilbake</Button>
+                            <Button style={{backgroundColor: "black", color: "white"}} onClick={() => {
+                                unPauseAgreement(agreementCode)
+                            }}>
+                                Gjenstart avtale
+                            </Button>
                         </ButtonWrapper>
                     </CancelWrapper>
                 </div>
@@ -229,7 +262,8 @@ export function AgreementPage() {
             {currentPage === Pages.CONFIRM_PAUSE && (
                 <div>
                     <Title>Avtalen din er nå satt på pause</Title>
-                    <ConfirmationText><b>Neste trekkdato:</b> {nextChargeDate}</ConfirmationText>
+                    <ConfirmationText>Avtalen din starter automatisk igjen den {formatDate(pausedUntilDate)}, fire dager før ditt neste trekk</ConfirmationText>
+                    <ConfirmationText>Du er også fri til å gjenstarte avtalen når du vil</ConfirmationText>
                     <ConfirmButton setShowLoading={() => setShowLoading(true)} />
                 </div>
             )}
