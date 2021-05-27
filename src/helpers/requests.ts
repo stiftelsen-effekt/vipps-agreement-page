@@ -1,7 +1,7 @@
 import { Share } from "../components/ShareSelection/ShareSelection";
 import { API_URL } from "../config/api";
 
-export function updatePrice(agreementCode: string, price: string) {
+export async function updatePrice(agreementCode: string, price: string) {
     const body = { agreementCode, price};
     
     fetch(`${API_URL}/vipps/agreement/price`, {
@@ -27,7 +27,7 @@ export async function updateAgreementDistribution(agreementCode: string, distrib
     return KID
 }
 
-export function updateChargeDay(agreementCode: string, chargeDay: number) {
+export async function updateChargeDay(agreementCode: string, chargeDay: number) {
     const body = { agreementCode, chargeDay};
     
     fetch(`${API_URL}/vipps/agreement/chargeday`, {
@@ -37,9 +37,19 @@ export function updateChargeDay(agreementCode: string, chargeDay: number) {
     })
 }
 
-export function cancelAgreement(agreementCode: string) {
+export async function cancelAgreement(agreementCode: string) {
     fetch(`${API_URL}/vipps/agreement/cancel/${agreementCode}`, {
         method: 'put',
+        headers: { 'Content-Type': 'application/json' },
+    })
+}
+
+export async function pauseAgreement(agreementCode: string, pausedUntilDate: Date) {
+    const body = {agreementCode, pausedUntilDate}
+
+    fetch(`${API_URL}/vipps/agreement/pause`, {
+        method: 'put',
+        body:    JSON.stringify(body),
         headers: { 'Content-Type': 'application/json' },
     })
 }

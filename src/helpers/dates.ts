@@ -1,5 +1,9 @@
 import moment from "moment"
 
+export function formatDate(date: Date) {
+    return moment(date).format("DD.MM.YYYY")
+}
+
 export function getNextChargeDate(chargeDayOfMonth: string) {
     const today = new Date()
 
@@ -20,10 +24,12 @@ export function getNextChargeDate(chargeDayOfMonth: string) {
             YYYY`).replaceAll(" ", "")
         )
     }
+    return "Invalid date"
 }
 
-export function isThreeDaysAhead(formattedDate: string) {
 
+// Check if a date is three days ahead of today
+export function isThreeDaysAhead(formattedDate: string) {
     const [dd, mm, yyyy] = formattedDate.split(".") 
     const today = new Date()
     const futureDate = new Date(parseInt(yyyy), parseInt(mm)-1, parseInt(dd))

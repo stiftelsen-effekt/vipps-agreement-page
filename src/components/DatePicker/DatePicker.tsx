@@ -3,7 +3,7 @@ import { orange20 } from "../../config/colors";
 import { getNextChargeDate, isThreeDaysAhead } from "../../helpers/dates";
 import { updateChargeDay } from "../../helpers/requests";
 import { ButtonWrapper } from "../Agreement/Agreement.style";
-import { Agreement, Changes, Pages } from "../Agreement/AgreementPage";
+import { Agreement, Pages } from "../Agreement/AgreementPage";
 import { Button } from "../Shared/Buttons/Buttons.style";
 import { Datebox, DateText, Wrapper } from "./DatePicker.style";
 
@@ -12,10 +12,9 @@ interface Props {
 	agreementCode: string;
 	setNewChargeDay: Function;
 	setCurrentPage: Function;
-	setConfirmChange: Function;
 }
 
-export const DatePicker: React.FC<Props> = ({agreement, agreementCode, setNewChargeDay, setCurrentPage, setConfirmChange}) => {
+export const DatePicker: React.FC<Props> = ({agreement, agreementCode, setNewChargeDay, setCurrentPage}) => {
 	const [selectedChargeDay, setSelectedChargeDay] = useState<number>(1) // Change to string
 	const [newChargeDate, setNewChargeDate] = useState<string>("")
 
@@ -49,23 +48,22 @@ export const DatePicker: React.FC<Props> = ({agreement, agreementCode, setNewCha
 				key="0"
 				style={{
 					backgroundColor: selectedChargeDay === 0 ? orange20 : "white",
-					width: "80px"
+					width: "120px"
 				}}
 				onClick={() => setSelectedChargeDay(0)}
 			>
-				Siste dag
+				Siste hver måned
 			</Datebox>
 			<DateText>Neste trekkdato blir: {newChargeDate}</DateText>
 			<ButtonWrapper>
-				<Button onClick={() => setCurrentPage(Pages.NONE)}>
-					Avbryt
+				<Button onClick={() => setCurrentPage(Pages.HOME)}>
+					Gå tilbake
 				</Button>
 				<Button onClick={() => {
 					if (selectedChargeDay > 0 && selectedChargeDay < 29) {
 						updateChargeDay(agreementCode, selectedChargeDay)
 						setNewChargeDay(selectedChargeDay)
-						setCurrentPage(Pages.CONFIRMATION)
-						setConfirmChange(Changes.DATE)
+						setCurrentPage(Pages.CONFIRM_CHARGEDAY)
 					}
 				}}>
 					Lagre trekkdag
