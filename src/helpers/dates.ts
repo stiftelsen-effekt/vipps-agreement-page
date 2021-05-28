@@ -6,7 +6,7 @@ export function formatDate(date: Date) {
     return moment(date).format("DD.MM.YYYY")
 }
 
-export function calculateNextChargeDay(paused_until_date: string | undefined, chargeDayOfMonth: string | undefined) {
+export function calculateNextChargeDay(paused_until_date: string, chargeDayOfMonth: string) {
 
     // If agreement is currently paused, next charge day is 4 days after pause ends
     if (paused_until_date && new Date(paused_until_date) > new Date()) {
@@ -17,7 +17,6 @@ export function calculateNextChargeDay(paused_until_date: string | undefined, ch
     else if (chargeDayOfMonth) return getNextChargeDate(chargeDayOfMonth)
 }
 
-// This can probably be rewritten better
 export function getNextChargeDate(chargeDayOfMonth: string) {
     const today = new Date()
 
