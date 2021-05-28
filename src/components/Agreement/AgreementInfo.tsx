@@ -29,7 +29,7 @@ export const AgreementInfo: React.FC<Props> = ({agreement, nextChargeDate}) => {
                         </tr>
                         <tr>
                             <LeftCell>Neste trekkdato:</LeftCell>
-                            <RightCell>{calculateNextChargeDay(agreement.paused_until_date)}</RightCell>
+                            <RightCell>{calculateNextChargeDay(agreement.paused_until_date, agreement.chargeDayOfMonth)}</RightCell>
                         </tr>
                     </tbody>
                 </Table>

@@ -15,7 +15,6 @@ export const MonthPicker: React.FC<Props> = ({chargeDay, setPausedUntilDate}) =>
 	const currentMonth = new Date().getMonth()
 	const currentDay = new Date().getDate()
 
-
 	useEffect(() => {
 	 	setNextChargeDate(formatDate(new Date(
 			 currentYear, 
@@ -32,9 +31,7 @@ export const MonthPicker: React.FC<Props> = ({chargeDay, setPausedUntilDate}) =>
 				style={{backgroundColor: pauseDuration === i ? orange20 : "white"}}
 				onClick={() => {
 					setPauseDuration(i)
-					console.log(new Date(currentYear, currentMonth + i, parseInt(chargeDay) - 4 ))
-					// End pause 4 days prior to the next charge day, to make time for creating next charge on schedule
-					setPausedUntilDate(new Date(currentYear, currentMonth + i, parseInt(chargeDay) - 4))
+					setPausedUntilDate(new Date(currentYear, currentMonth + i, parseInt(chargeDay)))
 				}}
 			>
 				{i}

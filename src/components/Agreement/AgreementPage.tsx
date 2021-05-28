@@ -29,6 +29,7 @@ export enum Pages {
     CONFIRM_CHARGEDAY,
     CONFIRM_AMOUNT,
     CONFIRM_SHARES,
+    CONFIRM_UNPAUSE,
     ERROR
 }
 
@@ -97,7 +98,7 @@ export function AgreementPage() {
                     <AgreementInfo agreement={agreement} nextChargeDate={nextChargeDate}/>
                     {paused ?
                         <div>
-                            <ShareTitle>Denne avtalen er satt på pause til {calculateNextChargeDay(agreement?.paused_until_date)}</ShareTitle>
+                            <ShareTitle>Denne avtalen er satt på pause til {calculateNextChargeDay(agreement?.paused_until_date, agreement?.chargeDayOfMonth)}</ShareTitle>
                             <BlackButton onClick={() => setCurrentPage(Pages.UNPAUSE)}>Gjenstart avtale nå</BlackButton>
                             <BlackButton onClick={() => setCurrentPage(Pages.CANCEL)}>Avslutt avtale</BlackButton>
                         </div>
@@ -224,6 +225,7 @@ export function AgreementPage() {
                             <Button onClick={() => setCurrentPage(Pages.HOME)}>Gå tilbake</Button>
                             <Button style={{backgroundColor: "black", color: "white"}} onClick={() => {
                                 unPauseAgreement(agreementCode)
+                                setCurrentPage(Pages.CONFIRM_UNPAUSE)
                             }}>
                                 Gjenstart avtale
                             </Button>
@@ -262,8 +264,15 @@ export function AgreementPage() {
             {currentPage === Pages.CONFIRM_PAUSE && (
                 <div>
                     <Title>Avtalen din er nå satt på pause</Title>
-                    <ConfirmationText>Avtalen din starter automatisk igjen den {formatDate(pausedUntilDate)}, fire dager før ditt neste trekk</ConfirmationText>
+                    <ConfirmationText>Avtalen din starter automatisk igjen den {formatDate(pausedUntilDate)}</ConfirmationText>
                     <ConfirmationText>Du er også fri til å gjenstarte avtalen når du vil</ConfirmationText>
+                    <ConfirmButton setShowLoading={() => setShowLoading(true)} />
+                </div>
+            )}
+            {currentPage === Pages.CONFIRM_UNPAUSE && (
+                <div>
+                    <Title>Avtalen din er nå gjenstartet</Title>
+                    <ConfirmationText>Neste trekkdato er {(nextChargeDate)} </ConfirmationText>
                     <ConfirmButton setShowLoading={() => setShowLoading(true)} />
                 </div>
             )}
