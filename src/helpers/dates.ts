@@ -17,6 +17,7 @@ export function calculateNextChargeDay(paused_until_date: string | undefined, ch
     else if (chargeDayOfMonth) return getNextChargeDate(chargeDayOfMonth)
 }
 
+// This can probably be rewritten better
 export function getNextChargeDate(chargeDayOfMonth: string) {
     const today = new Date()
 
