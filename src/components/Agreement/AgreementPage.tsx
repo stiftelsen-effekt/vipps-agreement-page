@@ -10,11 +10,12 @@ import { SharesDisplay } from '../ShareDisplay/ShareDisplay'
 import { DatePicker } from '../DatePicker/DatePicker'
 import { API_URL } from '../../config/api'
 import useFetch from "react-fetch-hook"
-import { calculateNextChargeDay, formatDate, getNextChargeDate } from '../../helpers/dates'
+import { calculateNextChargeDate, formatDate, getNextChargeDate } from '../../helpers/dates'
 import { SharesSelection } from '../ShareSelection/ShareSelection'
 import vipps_logo from '../../images/vipps_logo.svg'
 import { MonthPicker } from '../MonthPicker/MonthPicker'
 import { ConfirmButton } from '../Shared/ConfirmButton/ConfirmButton'
+import { readUrl } from '../../helpers/url'
 
 export enum Pages {
     HOME,
@@ -33,26 +34,16 @@ export enum Pages {
     ERROR
 }
 
-export enum Step {
-    INFO,
-    SELECT,
-    CONFIRM
-}
-
 export interface Agreement {
-	hasChargedThisMonth: any
     amount: number;
     status: string;
     chargeDayOfMonth: string;
     monthAlreadyCharged: boolean;
     KID: string;
-    donorID: number;
     paused_until_date: string;
 }
 
-// Extract the agreement code from the url
-const urlSplit = window.location.href.split("/")
-const agreementCode = urlSplit[urlSplit.length-1]
+const agreementCode = readUrl()
 
 export function AgreementPage() {
     const agreementRequest = useFetch<Agreement>(`${API_URL}/vipps/agreement/urlcode/${agreementCode || "none"}`);
@@ -68,21 +59,26 @@ export function AgreementPage() {
     const [KID, setKID] = useState<string>("")
     
     useEffect(() => {
-        if (agreementRequest.data) {
-            setAgreement(agreementRequest.data)
-            setKID(agreementRequest.data.KID)
-            setNextChargeDate(getNextChargeDate(agreementRequest.data.chargeDayOfMonth))
+        if (agreementRequest.data) setAgreement(agreementRequest.data)
+    }, [agreementRequest.data])
+
+    useEffect(() => {
+        if (agreement) {
+            setKID(agreement.KID)
+            setNextChargeDate(getNextChargeDate(
+                agreement.chargeDayOfMonth, 
+                agreement.monthAlreadyCharged
+            ))
 
             // if agreement is currently paused
-            if (new Date(agreementRequest.data.paused_until_date) > new Date()) {
+            if (new Date(agreement.paused_until_date) > new Date()) {
                 setPaused(true)
             }
         }
-    }, [agreementRequest.data])
-
+    }, [agreement])
 
     if (agreementRequest.isLoading || showLoading) return <AgreementWrapper><LoadingCircle/></AgreementWrapper>
-    if (agreementRequest.data?.status === "STOPPED" || !agreementRequest.data) return (
+    if (agreement?.status === "STOPPED" || !agreement) return (
         <AgreementWrapper>
             <div>
                 <VippsLogo src={vipps_logo}/>
@@ -101,7 +97,12 @@ export function AgreementPage() {
                         <AgreementInfo agreement={agreement} nextChargeDate={nextChargeDate}/>
                         {paused ?
                             <div>
-                                <ShareTitle>Denne avtalen er satt på pause til {calculateNextChargeDay(agreement?.paused_until_date, agreement?.chargeDayOfMonth)}</ShareTitle>
+                                <ShareTitle>Denne avtalen er satt på pause til {calculateNextChargeDate(
+                                    agreement?.paused_until_date, 
+                                    agreement?.chargeDayOfMonth,
+                                    agreement?.monthAlreadyCharged
+                                )}
+                                </ShareTitle>
                                 <BlackButton onClick={() => setCurrentPage(Pages.UNPAUSE)}>Gjenstart avtale nå</BlackButton>
                                 <BlackButton onClick={() => setCurrentPage(Pages.CANCEL)}>Avslutt avtale</BlackButton>
                             </div>

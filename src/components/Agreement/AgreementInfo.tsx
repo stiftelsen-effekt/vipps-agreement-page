@@ -4,7 +4,7 @@ import { SharesDisplay } from '../ShareDisplay/ShareDisplay'
 import { Title, Table, RightCell, VippsLogo, LeftCell, ShareTitle } from './Agreement.style'
 import vipps_logo from '../../images/vipps_logo.svg'
 import { Agreement } from './AgreementPage'
-import { calculateNextChargeDay, dayMs, formatDate } from '../../helpers/dates'
+import { calculateNextChargeDate } from '../../helpers/dates'
 interface Props {
     agreement: Agreement | undefined;
     nextChargeDate: string;
@@ -29,7 +29,11 @@ export const AgreementInfo: React.FC<Props> = ({agreement, nextChargeDate}) => {
                         </tr>
                         <tr>
                             <LeftCell>Neste trekkdato:</LeftCell>
-                            <RightCell>{calculateNextChargeDay(agreement.paused_until_date, agreement.chargeDayOfMonth)}</RightCell>
+                            <RightCell>{calculateNextChargeDate(
+                                agreement.paused_until_date, 
+                                agreement.chargeDayOfMonth, 
+                                agreement.monthAlreadyCharged
+                            )}</RightCell>
                         </tr>
                     </tbody>
                 </Table>

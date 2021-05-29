@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { orange20 } from "../../config/colors";
-import { getNextChargeDate, isThreeDaysAhead } from "../../helpers/dates";
+import { getNextChargeDate } from "../../helpers/dates";
 import { updateChargeDay } from "../../helpers/requests";
 import { ButtonWrapper } from "../Agreement/Agreement.style";
 import { Agreement, Pages } from "../Agreement/AgreementPage";
@@ -15,7 +15,7 @@ interface Props {
 }
 
 export const DatePicker: React.FC<Props> = ({agreement, agreementCode, setNewChargeDay, setCurrentPage}) => {
-	const [selectedChargeDay, setSelectedChargeDay] = useState<number>(1) // Change to string
+	const [selectedChargeDay, setSelectedChargeDay] = useState<number>(1)
 	const [newChargeDate, setNewChargeDate] = useState<string>("")
 
 	useEffect(() => {
@@ -23,9 +23,13 @@ export const DatePicker: React.FC<Props> = ({agreement, agreementCode, setNewCha
 	}, [agreement])
 
 	useEffect(() => {
-		isThreeDaysAhead(getNextChargeDate(selectedChargeDay.toString()) || "") //Whats this???
-		setNewChargeDate(getNextChargeDate(selectedChargeDay.toString()) || "")
-	}, [selectedChargeDay])
+		if (agreement) {
+			setNewChargeDate(getNextChargeDate(
+				selectedChargeDay.toString(),
+				agreement?.monthAlreadyCharged
+			))
+		}
+	}, [agreement, selectedChargeDay])
 
 	let dateBoxes: JSX.Element[] = []
 	for (let i = 1; i <= 28; i++) {
