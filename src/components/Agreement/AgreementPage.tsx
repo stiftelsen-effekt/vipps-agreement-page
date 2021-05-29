@@ -10,7 +10,7 @@ import { SharesDisplay } from '../ShareDisplay/ShareDisplay'
 import { DatePicker } from '../DatePicker/DatePicker'
 import { API_URL } from '../../config/api'
 import useFetch from "react-fetch-hook"
-import { calculateNextChargeDate, formatDate, getNextChargeDate } from '../../helpers/dates'
+import { formatDate, getInitialNextChargeDate, getNextChargeDate } from '../../helpers/dates'
 import { SharesSelection } from '../ShareSelection/ShareSelection'
 import vipps_logo from '../../images/vipps_logo.svg'
 import { MonthPicker } from '../MonthPicker/MonthPicker'
@@ -41,6 +41,7 @@ export interface Agreement {
     monthAlreadyCharged: boolean;
     KID: string;
     paused_until_date: string;
+    forced_charge_date: string;
 }
 
 const agreementCode = readUrl()
@@ -65,10 +66,12 @@ export function AgreementPage() {
     useEffect(() => {
         if (agreement) {
             setKID(agreement.KID)
-            setNextChargeDate(getNextChargeDate(
-                agreement.chargeDayOfMonth, 
-                agreement.monthAlreadyCharged
-            ))
+            setNextChargeDate(formatDate(getInitialNextChargeDate(
+                 parseInt(agreement.chargeDayOfMonth), 
+                 agreement.monthAlreadyCharged,
+                 agreement.paused_until_date,
+                 new Date(agreement.forced_charge_date)
+            )))
 
             // if agreement is currently paused
             if (new Date(agreement.paused_until_date) > new Date()) {
@@ -97,11 +100,7 @@ export function AgreementPage() {
                         <AgreementInfo agreement={agreement} nextChargeDate={nextChargeDate}/>
                         {paused ?
                             <div>
-                                <ShareTitle>Denne avtalen er satt på pause til {calculateNextChargeDate(
-                                    agreement?.paused_until_date, 
-                                    agreement?.chargeDayOfMonth,
-                                    agreement?.monthAlreadyCharged
-                                )}
+                                <ShareTitle>Denne avtalen er satt på pause til {nextChargeDate}
                                 </ShareTitle>
                                 <BlackButton onClick={() => setCurrentPage(Pages.UNPAUSE)}>Gjenstart avtale nå</BlackButton>
                                 <BlackButton onClick={() => setCurrentPage(Pages.CANCEL)}>Avslutt avtale</BlackButton>

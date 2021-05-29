@@ -18,11 +18,9 @@ export async function updateAgreementDistribution(agreementCode: string, distrib
         method: 'put',
         body:    JSON.stringify(body),
         headers: { 'Content-Type': 'application/json' },
+    }).then(res => res.json()).then((json) => {
+        return json.KID
     })
-        .then(res => res.json())
-        .then((json) => {
-            return json.KID
-        })
 
     return KID
 }

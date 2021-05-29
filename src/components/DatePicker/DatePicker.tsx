@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { orange20 } from "../../config/colors";
-import { getNextChargeDate } from "../../helpers/dates";
+import { getInitialNextChargeDate, getNextChargeDate, isThreeDaysAhead } from "../../helpers/dates";
 import { updateChargeDay } from "../../helpers/requests";
 import { ButtonWrapper } from "../Agreement/Agreement.style";
 import { Agreement, Pages } from "../Agreement/AgreementPage";
@@ -24,10 +24,7 @@ export const DatePicker: React.FC<Props> = ({agreement, agreementCode, setNewCha
 
 	useEffect(() => {
 		if (agreement) {
-			setNewChargeDate(getNextChargeDate(
-				selectedChargeDay.toString(),
-				agreement?.monthAlreadyCharged
-			))
+			//setNewChargeDate(getInitialNextChargeDate())
 		}
 	}, [agreement, selectedChargeDay])
 
