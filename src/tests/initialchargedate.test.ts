@@ -32,7 +32,7 @@ test('If not charged this month and today is after charge day without a forced f
   expect(nextChargeDate).toStrictEqual(new Date(thisYear, thisMonth+1, chargeDayOfMonth))
 });
 
-test('If not charged this month and future forced charge date', () => {
+test('If not charged this month with a future forced charge date', () => {
   const chargeDayOfMonth = 15
   const mockToday = new Date(2500, 0, 15)
   const mockFutureForcedDate = new Date(3000, 0, 15)

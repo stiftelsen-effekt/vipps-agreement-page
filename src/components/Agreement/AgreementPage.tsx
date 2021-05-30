@@ -191,7 +191,9 @@ export function AgreementPage() {
                         <AgreementInfo agreement={agreement} nextChargeDate={nextChargeDate}/>
                         <CancelWrapper>
                             <ShareTitle>Avslutter avtale</ShareTitle>
-                            <p>Er du sikker på at du vil avslutte avtalen?</p>
+                            <p>Avsluttede avtaler kan ikke gjenstartes,
+                            hvis du ønsker å gjenstarte avtalen senere kan du sette den pause istedenfor.<br/>
+                            Er du sikker på at du vil avslutte avtalen?</p>
                             <ButtonWrapper>
                                 <Button onClick={() =>  setCurrentPage(Pages.HOME)}>Gå tilbake</Button>
                                 <Button style={{backgroundColor: "black", color: "white"}} onClick={() => {
@@ -239,6 +241,7 @@ export function AgreementPage() {
                 {currentPage === Pages.CONFIRM_CANCELLED && 
                     <div>
                         <p>Avtalen din er nå avsluttet</p>
+                        Du er alltid velkommen til å opprette en ny avtale via vår nettside.
                     </div>
                 }
                 {currentPage === Pages.CONFIRM_AMOUNT && (

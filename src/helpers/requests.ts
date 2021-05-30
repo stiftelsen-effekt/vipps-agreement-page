@@ -25,14 +25,25 @@ export async function updateAgreementDistribution(agreementCode: string, distrib
     return KID
 }
 
-export async function updateChargeDay(agreementCode: string, chargeDay: number) {
-    const body = { agreementCode, chargeDay};
+export async function updateChargeDay(
+        agreementCode: string,
+        chargeDay: number,
+        forcedChargeDate: Date = new Date(0), // 1970, will never charge
+        cancelCharges: boolean = false
+    ) {
+    const chargeDayBody = { agreementCode, chargeDay};
     
     fetch(`${API_URL}/vipps/agreement/chargeday`, {
         method: 'put',
-        body:    JSON.stringify(body),
+        body:    JSON.stringify(chargeDayBody),
         headers: { 'Content-Type': 'application/json' },
     })
+
+    const forcedChargeBody = { agreementCode, forcedChargeDate}
+    // Add updateForcedCharge
+
+    const cancelChargeBody = { agreementCode, cancelCharges}
+    // Add cancelCharge
 }
 
 export async function cancelAgreement(agreementCode: string) {

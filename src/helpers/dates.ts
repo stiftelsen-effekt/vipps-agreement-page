@@ -12,7 +12,7 @@ export function getInitialNextChargeDate(
     monthAlreadyCharged: boolean, 
     pausedUntilDate: string, 
     forcedChargeDate: Date,
-    todayDate: Date = new Date(), 
+    todayDate: Date = new Date(), // Used for mocking today in tests
     ) {
 
     // If agreement is currently paused, next charge day is 4 days after pause ends
@@ -22,6 +22,12 @@ export function getInitialNextChargeDate(
     }
 
     if (monthAlreadyCharged) {
+        const chargeDateNextMonth = new Date(thisYear, thisMonth+1, chargeDayOfMonth)
+
+        // If next month has a forced charge date that is earlier than regular chargeDayOfMonth
+        if (isValidFutureDate(forcedChargeDate) && forcedChargeDate < chargeDateNextMonth) {
+            return forcedChargeDate
+        }
         return new Date(thisYear, thisMonth+1, chargeDayOfMonth)
     }
     if (!monthAlreadyCharged) {
@@ -37,33 +43,66 @@ export function getInitialNextChargeDate(
     return new Date()
 }
 
-// Called when selecting a new charge date
-export function getNextChargeDate(chargeDayOfMonth: string, monthAlreadyCharged: boolean): Date {
-    const today = new Date()
-
-    // If the next charge date is the current month
-    if (parseInt(chargeDayOfMonth) >= today.getDate()) {
-        return new Date()
-        //return(moment(today).format(chargeDayOfMonth + ".MM.YYYY"))
-    }
-    // If the next charge date is next month
-    else if (parseInt(chargeDayOfMonth) < today.getDate()) {
-        const monthToday = today.getMonth()
-
-        // Month is zero indexed, hence the plus two
-        // Handle December by setting January instead of adding 2 
-        /*
-        const nextChargeMonth = monthToday === 11 ? "1" : monthToday + 2
-        return(moment(today).format(`
-            ${chargeDayOfMonth.length === 1 ? "0" + chargeDayOfMonth : chargeDayOfMonth}.
-            ${nextChargeMonth.toString().length === 1 ? "0" + nextChargeMonth : nextChargeMonth}.
-            YYYY`).replace(/ /g, "")
-        )
-        */
-    }
-    return new Date()
+// request payload for updateChargeDay() in requests.ts
+export interface updateChargeDayPayload {
+    newChargeDay: number;
+    forcedChargeDate: Date;
+    cancelCharges: boolean;
 }
 
+// Called when selecting a new charge date
+export function getChargeDayPayload(
+        newChargeDay: number,
+        monthAlreadyCharged: boolean,
+        todayDate: Date = new Date() // Used for mocking today in tests
+    ): updateChargeDayPayload {
+    
+    let forcedChargeDate = new Date(0) // 1970, i.e. will never charge
+    let cancelCharges = false
+    const fourDaysAhead = new Date(todayDate.getTime()+(dayMs*4))
+    
+    if (monthAlreadyCharged) {
+        // If next charge day is less than three days ahead in next month
+        if (fourDaysAhead.getDate() <= 3) {
+            // Force charge as soon as possible, i.e. four days ahead
+            forcedChargeDate = fourDaysAhead
+        }
+    }
+
+    if (!monthAlreadyCharged) {
+        const newChargeDateThisMonth = new Date(todayDate.getFullYear(), todayDate.getMonth(), newChargeDay)
+        const newChargeDateNextMonth = new Date(todayDate.getFullYear(), todayDate.getMonth()+1, newChargeDay)
+        
+        // If the next charge date is within three days
+        if (isThreeDaysAhead(newChargeDateThisMonth, todayDate)) {
+            // Force charge as soon as possible, i.e. four days ahead
+        }
+        // If the next charge date is within three days
+        if (!isThreeDaysAhead(newChargeDateThisMonth, todayDate)) {
+            // Force charge as soon as possible, i.e. four days ahead
+            forcedChargeDate = fourDaysAhead
+        }
+
+        if (newChargeDay < todayDate.getDate()) {
+            const monthToday = todayDate.getMonth()
+    
+            // Month is zero indexed, hence the plus two
+            // Handle December by setting January instead of adding 2 
+            /*
+            const nextChargeMonth = monthToday === 11 ? "1" : monthToday + 2
+            return(moment(today).format(`
+                ${chargeDayOfMonth.length === 1 ? "0" + chargeDayOfMonth : chargeDayOfMonth}.
+                ${nextChargeMonth.toString().length === 1 ? "0" + nextChargeMonth : nextChargeMonth}.
+                YYYY`).replace(/ /g, "")
+            )
+            */
+        }
+    }
+    return {newChargeDay, forcedChargeDate, cancelCharges}
+}
+
+
+// Probably not needed, just use formatDate on the above function
 export function getFormattedNextChargeDate(chargeDayOfMonth: string, monthAlreadyCharged: boolean) {
     const today = new Date()
 
@@ -91,17 +130,15 @@ export function getFormattedNextChargeDate(chargeDayOfMonth: string, monthAlread
 /* Helper functions below */
 
 // Check if a date is three days ahead of today
-export function isThreeDaysAhead(date: Date) { // Change parameter to Date
-    const dd = date.getDate()
-    const mm = date.getMonth()
-    const yyyy = date.getFullYear()
+export function isThreeDaysAhead(dueDate: Date, todayDate: Date = new Date()) {
+    const dd = dueDate.getDate()
+    const mm = dueDate.getMonth()
+    const yyyy = dueDate.getFullYear()
 
-    const today = new Date()
     const futureDate = new Date(yyyy, mm, dd)
-    const timeDifference = futureDate.getTime() - today.getTime()
+    const timeDifference = futureDate.getTime() - todayDate.getTime()
     const daysAhead = timeDifference / (1000 * 3600 * 24)
     
-    console.log(daysAhead)
     if (daysAhead < 3) return false
 
     return true
