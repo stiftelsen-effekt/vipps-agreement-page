@@ -45,7 +45,7 @@ export const MonthPicker: React.FC<Props> = ({agreement, chargeDay, setPausedUnt
 		<Wrapper>
 			<DateText>Velg varigheten av pausen din i antall måneder</DateText>
 			{dateBoxes.map(box => {return box})}
-			<DateText>Neste trekkdato blir: {nextChargeDate}</DateText>
+			<DateText>Første trekkdato etter pausen: {nextChargeDate}</DateText>
 		</Wrapper>
 	);
 };

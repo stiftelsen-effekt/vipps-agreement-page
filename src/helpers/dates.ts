@@ -12,8 +12,11 @@ export function getInitialNextChargeDate(
     monthAlreadyCharged: boolean, 
     pausedUntilDate: string, 
     forcedChargeDate: Date,
+    pendingChargeDueDate: Date | false,
     todayDate: Date = new Date(), // Used for mocking today in tests
     ) {
+
+    if (pendingChargeDueDate) return pendingChargeDueDate
 
     // If agreement is currently paused, next charge day is 4 days after pause ends
     if (isAgreementPaused(pausedUntilDate)) {

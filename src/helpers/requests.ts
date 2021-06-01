@@ -42,8 +42,8 @@ export async function updateChargeDay(
     const forcedChargeBody = { agreementCode, forcedChargeDate}
     // Add updateForcedCharge
 
-    const cancelChargeBody = { agreementCode, cancelCharges}
-    // Add cancelCharge
+    const cancelChargesBody = { agreementCode, cancelCharges}
+    // Add cancelCharges
 }
 
 export async function cancelAgreement(agreementCode: string) {

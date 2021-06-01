@@ -10,7 +10,7 @@ import { SharesDisplay } from '../ShareDisplay/ShareDisplay'
 import { DatePicker } from '../DatePicker/DatePicker'
 import { API_URL } from '../../config/api'
 import useFetch from "react-fetch-hook"
-import { formatDate, getInitialNextChargeDate } from '../../helpers/dates'
+import { formatDate, getInitialNextChargeDate, isThreeDaysAfterToday } from '../../helpers/dates'
 import { SharesSelection } from '../ShareSelection/ShareSelection'
 import vipps_logo from '../../images/vipps_logo.svg'
 import { MonthPicker } from '../MonthPicker/MonthPicker'
@@ -34,6 +34,10 @@ export enum Pages {
     ERROR
 }
 
+export interface PendingDueCharge {
+    amount: number;
+    due: string;
+}
 export interface Agreement {
     amount: number;
     status: string;
@@ -42,6 +46,7 @@ export interface Agreement {
     KID: string;
     paused_until_date: string;
     forced_charge_date: string;
+    pendingDueCharge: PendingDueCharge | false;
 }
 
 const agreementCode = readUrl()
@@ -70,7 +75,9 @@ export function AgreementPage() {
                  parseInt(agreement.chargeDayOfMonth), 
                  agreement.monthAlreadyCharged,
                  agreement.paused_until_date,
-                 new Date(agreement.forced_charge_date)
+                 new Date(agreement.forced_charge_date),
+                 !agreement?.pendingDueCharge ? false : 
+                 new Date(agreement.pendingDueCharge.due)
             )))
 
             // if agreement is currently paused
@@ -124,7 +131,6 @@ export function AgreementPage() {
                         <SumInputWrapper>
                             <ShareTitle>Velg ny månedlig sum</ShareTitle>
                             <InfoText>Endring av sum må gjøres minst tre dager i forveien av neste trekkdato</InfoText>
-                            {invalidPrice && <ErrorText>Ugyldig sum</ErrorText>}
                             <div style={{width: "100%", paddingTop: "10px", paddingBottom: "10px"}}> 
                                 <TextInput
                                     label="Sum"
@@ -141,6 +147,8 @@ export function AgreementPage() {
                                         setInvalidPrice(false)
                                     }}
                                 />
+                                {invalidPrice && <ErrorText>Ugyldig sum</ErrorText>}
+                                {agreement.pendingDueCharge && <ErrorText>Neste trekk vil ikke påvirkes av denne endringen</ErrorText>}
                             </div>
                             <ButtonWrapper>
                                 <Button onClick={() => setCurrentPage(Pages.HOME)}>

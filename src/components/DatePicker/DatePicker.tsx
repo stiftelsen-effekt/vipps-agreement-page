@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { orange20 } from "../../config/colors";
+import { formatDate, getInitialNextChargeDate, getNewChargeDayResults } from "../../helpers/dates";
 import { updateChargeDay } from "../../helpers/requests";
 import { ButtonWrapper } from "../Agreement/Agreement.style";
 import { Agreement, Pages } from "../Agreement/AgreementPage";
@@ -18,12 +19,34 @@ export const DatePicker: React.FC<Props> = ({agreement, agreementCode, setNewCha
 	const [newChargeDate, setNewChargeDate] = useState<string>("")
 
 	useEffect(() => {
-		if (agreement) setSelectedChargeDay(parseInt(agreement.chargeDayOfMonth))
+		if (agreement) {
+			setNewChargeDate(
+				formatDate(
+					getInitialNextChargeDate(
+						parseInt(agreement.chargeDayOfMonth),
+						agreement.monthAlreadyCharged,
+						agreement.paused_until_date,
+						new Date(agreement.forced_charge_date),
+						!agreement?.pendingDueCharge ? false : 
+						new Date(agreement.pendingDueCharge.due)
+						
+					)
+				)
+			)
+			setSelectedChargeDay(parseInt(agreement.chargeDayOfMonth))
+		}
 	}, [agreement])
 
 	useEffect(() => {
 		if (agreement) {
-			//setNewChargeDate(getInitialNextChargeDate())
+			let results = getNewChargeDayResults(
+				selectedChargeDay,
+				agreement?.monthAlreadyCharged,
+				!agreement?.pendingDueCharge ? false : 
+				new Date(agreement.pendingDueCharge.due)
+
+			)
+			setNewChargeDate(formatDate(results.nextChargeDate))
 		}
 	}, [agreement, selectedChargeDay])
 
@@ -50,7 +73,18 @@ export const DatePicker: React.FC<Props> = ({agreement, agreementCode, setNewCha
 					backgroundColor: selectedChargeDay === 0 ? orange20 : "white",
 					width: "120px"
 				}}
-				onClick={() => setSelectedChargeDay(0)}
+				onClick={() => {
+					setSelectedChargeDay(0)
+					if (agreement) {
+						let results = getNewChargeDayResults(
+							selectedChargeDay,
+							agreement?.monthAlreadyCharged,
+							!agreement?.pendingDueCharge ? false : 
+							new Date(agreement.pendingDueCharge.due)
+
+						)
+					}
+				}}
 			>
 				Siste hver måned
 			</Datebox>
