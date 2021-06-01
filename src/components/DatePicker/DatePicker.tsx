@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { orange20 } from "../../config/colors";
-import { formatDate, getInitialNextChargeDate, getNewChargeDayResults } from "../../helpers/dates";
+import { formatDate, getNewChargeDayResults, getNextChargeDate, NewChargeDayResults } from "../../helpers/dates";
 import { updateChargeDay } from "../../helpers/requests";
 import { ButtonWrapper } from "../Agreement/Agreement.style";
 import { Agreement, Pages } from "../Agreement/AgreementPage";
@@ -17,19 +17,19 @@ interface Props {
 export const DatePicker: React.FC<Props> = ({agreement, agreementCode, setNewChargeDay, setCurrentPage}) => {
 	const [selectedChargeDay, setSelectedChargeDay] = useState<number>(1)
 	const [newChargeDate, setNewChargeDate] = useState<string>("")
+	const [requestData, setRequestData] = useState<NewChargeDayResults>()
 
 	useEffect(() => {
 		if (agreement) {
 			setNewChargeDate(
 				formatDate(
-					getInitialNextChargeDate(
+					getNextChargeDate(
 						parseInt(agreement.chargeDayOfMonth),
 						agreement.monthAlreadyCharged,
 						agreement.paused_until_date,
 						new Date(agreement.forced_charge_date),
 						!agreement?.pendingDueCharge ? false : 
 						new Date(agreement.pendingDueCharge.due)
-						
 					)
 				)
 			)
@@ -39,13 +39,15 @@ export const DatePicker: React.FC<Props> = ({agreement, agreementCode, setNewCha
 
 	useEffect(() => {
 		if (agreement) {
+			// Get the results from 
 			let results = getNewChargeDayResults(
 				selectedChargeDay,
-				agreement?.monthAlreadyCharged,
-				!agreement?.pendingDueCharge ? false : 
+				agreement.monthAlreadyCharged,
+				!agreement.pendingDueCharge ? false : 
 				new Date(agreement.pendingDueCharge.due)
 
 			)
+			setRequestData(results)
 			setNewChargeDate(formatDate(results.nextChargeDate))
 		}
 	}, [agreement, selectedChargeDay])
@@ -75,15 +77,6 @@ export const DatePicker: React.FC<Props> = ({agreement, agreementCode, setNewCha
 				}}
 				onClick={() => {
 					setSelectedChargeDay(0)
-					if (agreement) {
-						let results = getNewChargeDayResults(
-							selectedChargeDay,
-							agreement?.monthAlreadyCharged,
-							!agreement?.pendingDueCharge ? false : 
-							new Date(agreement.pendingDueCharge.due)
-
-						)
-					}
 				}}
 			>
 				Siste hver måned
@@ -95,7 +88,15 @@ export const DatePicker: React.FC<Props> = ({agreement, agreementCode, setNewCha
 				</Button>
 				<Button onClick={() => {
 					if (selectedChargeDay > 0 && selectedChargeDay < 29) {
-						updateChargeDay(agreementCode, selectedChargeDay)
+						// Sends request
+						if (requestData) {
+							updateChargeDay(
+								agreementCode, 
+								selectedChargeDay,
+								requestData.forcedChargeDate,
+								requestData.cancelCharges
+								)
+						}
 						setNewChargeDay(selectedChargeDay)
 						setCurrentPage(Pages.CONFIRM_CHARGEDAY)
 					}

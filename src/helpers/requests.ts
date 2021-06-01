@@ -28,22 +28,36 @@ export async function updateAgreementDistribution(agreementCode: string, distrib
 export async function updateChargeDay(
         agreementCode: string,
         chargeDay: number,
-        forcedChargeDate: Date = new Date(0), // 1970, will never charge
+        forcedChargeDate: Date | false,
         cancelCharges: boolean = false
     ) {
-    const chargeDayBody = { agreementCode, chargeDay};
     
+    const chargeDayBody = {agreementCode, chargeDay}
     fetch(`${API_URL}/vipps/agreement/chargeday`, {
         method: 'put',
         body:    JSON.stringify(chargeDayBody),
         headers: { 'Content-Type': 'application/json' },
     })
 
-    const forcedChargeBody = { agreementCode, forcedChargeDate}
-    // Add updateForcedCharge
+    if (forcedChargeDate) await updateForcedChargeDate(agreementCode, forcedChargeDate)
+    if (cancelCharges) await cancelPendingCharges(agreementCode) 
+}
 
-    const cancelChargesBody = { agreementCode, cancelCharges}
-    // Add cancelCharges
+export async function updateForcedChargeDate(agreementCode: string, forcedChargeDate: Date) {
+    fetch(`${API_URL}/vipps/agreement/charges/cancel`, {
+        method: 'post',
+        body:    JSON.stringify({agreementCode, forcedChargeDate}),
+        headers: { 'Content-Type': 'application/json' },
+    })
+}
+
+
+export async function cancelPendingCharges(agreementCode: string) {
+    fetch(`${API_URL}/vipps/agreement/charges/cancel`, {
+        method: 'post',
+        body:    JSON.stringify({agreementCode}),
+        headers: { 'Content-Type': 'application/json' },
+    })
 }
 
 export async function cancelAgreement(agreementCode: string) {

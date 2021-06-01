@@ -7,7 +7,7 @@ const thisMonth = new Date().getMonth()
 const thisDay = new Date().getDate()
 
 // Only called once when starting the app
-export function getInitialNextChargeDate(
+export function getNextChargeDate(
     chargeDayOfMonth: number, 
     monthAlreadyCharged: boolean, 
     pausedUntilDate: string, 
@@ -76,7 +76,6 @@ export function getNewChargeDayResults(
     let nextChargeDate = newChargeDateThisMonth
     
     if (monthAlreadyCharged) {
-        // If the next charge date is less than three days ahead of today
         if (!isThreeDaysAfterToday(newChargeDateNextMonth, todayDate)) {
             // Test A
             if (todayDate.getMonth() < fourDaysAhead.getMonth()) {

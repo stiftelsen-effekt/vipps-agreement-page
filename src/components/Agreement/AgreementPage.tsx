@@ -10,7 +10,7 @@ import { SharesDisplay } from '../ShareDisplay/ShareDisplay'
 import { DatePicker } from '../DatePicker/DatePicker'
 import { API_URL } from '../../config/api'
 import useFetch from "react-fetch-hook"
-import { formatDate, getInitialNextChargeDate, isThreeDaysAfterToday } from '../../helpers/dates'
+import { formatDate, getNextChargeDate } from '../../helpers/dates'
 import { SharesSelection } from '../ShareSelection/ShareSelection'
 import vipps_logo from '../../images/vipps_logo.svg'
 import { MonthPicker } from '../MonthPicker/MonthPicker'
@@ -71,7 +71,7 @@ export function AgreementPage() {
     useEffect(() => {
         if (agreement) {
             setKID(agreement.KID)
-            setNextChargeDate(formatDate(getInitialNextChargeDate(
+            setNextChargeDate(formatDate(getNextChargeDate(
                  parseInt(agreement.chargeDayOfMonth), 
                  agreement.monthAlreadyCharged,
                  agreement.paused_until_date,
