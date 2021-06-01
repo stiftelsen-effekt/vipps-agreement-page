@@ -10,7 +10,7 @@ import { SharesDisplay } from '../ShareDisplay/ShareDisplay'
 import { DatePicker } from '../DatePicker/DatePicker'
 import { API_URL } from '../../config/api'
 import useFetch from "react-fetch-hook"
-import { formatDate, getInitialNextChargeDate, getNextChargeDate } from '../../helpers/dates'
+import { formatDate, getInitialNextChargeDate } from '../../helpers/dates'
 import { SharesSelection } from '../ShareSelection/ShareSelection'
 import vipps_logo from '../../images/vipps_logo.svg'
 import { MonthPicker } from '../MonthPicker/MonthPicker'

@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { orange20 } from "../../config/colors";
-import { getInitialNextChargeDate, getNextChargeDate, isThreeDaysAhead } from "../../helpers/dates";
 import { updateChargeDay } from "../../helpers/requests";
 import { ButtonWrapper } from "../Agreement/Agreement.style";
 import { Agreement, Pages } from "../Agreement/AgreementPage";
