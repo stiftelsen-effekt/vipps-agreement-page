@@ -40,12 +40,13 @@ export async function updateChargeDay(
     })
 
     if (forcedChargeDate) await updateForcedChargeDate(agreementCode, forcedChargeDate)
-    if (cancelCharges) await cancelPendingCharges(agreementCode) 
+    if (!forcedChargeDate) await updateForcedChargeDate(agreementCode, null)
+    if (cancelCharges) await cancelPendingCharges(agreementCode)
 }
 
-export async function updateForcedChargeDate(agreementCode: string, forcedChargeDate: Date) {
-    fetch(`${API_URL}/vipps/agreement/charges/cancel`, {
-        method: 'post',
+export async function updateForcedChargeDate(agreementCode: string, forcedChargeDate: Date | null) {
+    fetch(`${API_URL}/vipps/agreement/forcedcharge`, {
+        method: 'put',
         body:    JSON.stringify({agreementCode, forcedChargeDate}),
         headers: { 'Content-Type': 'application/json' },
     })

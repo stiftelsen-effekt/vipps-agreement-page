@@ -11,10 +11,11 @@ interface Props {
 	agreement: Agreement | undefined;
 	agreementCode: string;
 	setNewChargeDay: Function;
+	setNextChargeDate: Function;
 	setCurrentPage: Function;
 }
 
-export const DatePicker: React.FC<Props> = ({agreement, agreementCode, setNewChargeDay, setCurrentPage}) => {
+export const DatePicker: React.FC<Props> = ({agreement, agreementCode, setNewChargeDay, setNextChargeDate, setCurrentPage}) => {
 	const [selectedChargeDay, setSelectedChargeDay] = useState<number>(1)
 	const [newChargeDate, setNewChargeDate] = useState<string>("")
 	const [requestData, setRequestData] = useState<NewChargeDayResults>()
@@ -27,7 +28,7 @@ export const DatePicker: React.FC<Props> = ({agreement, agreementCode, setNewCha
 						parseInt(agreement.chargeDayOfMonth),
 						agreement.monthAlreadyCharged,
 						agreement.paused_until_date,
-						new Date(agreement.forced_charge_date),
+						new Date(agreement.force_charge_date),
 						!agreement?.pendingDueCharge ? false : 
 						new Date(agreement.pendingDueCharge.due)
 					)
@@ -39,13 +40,12 @@ export const DatePicker: React.FC<Props> = ({agreement, agreementCode, setNewCha
 
 	useEffect(() => {
 		if (agreement) {
-			// Get the results from 
+			// Get the results from changing charge day to use in the request
 			let results = getNewChargeDayResults(
 				selectedChargeDay,
 				agreement.monthAlreadyCharged,
 				!agreement.pendingDueCharge ? false : 
 				new Date(agreement.pendingDueCharge.due)
-
 			)
 			setRequestData(results)
 			setNewChargeDate(formatDate(results.nextChargeDate))
@@ -95,10 +95,11 @@ export const DatePicker: React.FC<Props> = ({agreement, agreementCode, setNewCha
 								selectedChargeDay,
 								requestData.forcedChargeDate,
 								requestData.cancelCharges
-								)
+							)						
+							setNextChargeDate(formatDate(requestData?.nextChargeDate))
+							setNewChargeDay(selectedChargeDay)
+							setCurrentPage(Pages.CONFIRM_CHARGEDAY)
 						}
-						setNewChargeDay(selectedChargeDay)
-						setCurrentPage(Pages.CONFIRM_CHARGEDAY)
 					}
 				}}>
 					Lagre trekkdag

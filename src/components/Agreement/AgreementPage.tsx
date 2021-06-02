@@ -45,7 +45,7 @@ export interface Agreement {
     monthAlreadyCharged: boolean;
     KID: string;
     paused_until_date: string;
-    forced_charge_date: string;
+    force_charge_date: string;
     pendingDueCharge: PendingDueCharge | false;
 }
 
@@ -75,7 +75,7 @@ export function AgreementPage() {
                  parseInt(agreement.chargeDayOfMonth), 
                  agreement.monthAlreadyCharged,
                  agreement.paused_until_date,
-                 new Date(agreement.forced_charge_date),
+                 new Date(agreement.force_charge_date),
                  !agreement?.pendingDueCharge ? false : 
                  new Date(agreement.pendingDueCharge.due)
             )))
@@ -189,6 +189,7 @@ export function AgreementPage() {
                                 agreement={agreement}
                                 agreementCode={agreementCode}
                                 setNewChargeDay={(day: string) => setNewChargeDay(day)}
+                                setNextChargeDate={(day: string) => setNextChargeDate(day)}
                                 setCurrentPage={(page: Pages) => setCurrentPage(page)}
                             />
                         </SharesWrapper>

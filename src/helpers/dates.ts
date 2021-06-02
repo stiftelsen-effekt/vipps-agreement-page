@@ -16,6 +16,7 @@ export function getNextChargeDate(
     todayDate: Date = new Date(), // Used for mocking today in tests
     ) {
 
+    const chargeDateNextMonth = new Date(thisYear, thisMonth+1, chargeDayOfMonth)
     if (pendingChargeDueDate) return pendingChargeDueDate
 
     // If agreement is currently paused, next charge day is 4 days after pause ends
@@ -25,7 +26,6 @@ export function getNextChargeDate(
     }
 
     if (monthAlreadyCharged) {
-        const chargeDateNextMonth = new Date(thisYear, thisMonth+1, chargeDayOfMonth)
 
         // If next month has a forced charge date that is earlier than regular chargeDayOfMonth
         if (isValidFutureDate(forcedChargeDate) && forcedChargeDate < chargeDateNextMonth) {
@@ -35,7 +35,12 @@ export function getNextChargeDate(
     }
     if (!monthAlreadyCharged) {
         // If today is before the charge day
-        if (todayDate.getDate() < chargeDayOfMonth) return new Date(thisYear, thisMonth, chargeDayOfMonth)
+        if (todayDate.getDate() < chargeDayOfMonth) {
+            if (isValidFutureDate(forcedChargeDate)) {
+                if (forcedChargeDate < chargeDateNextMonth) return new Date(forcedChargeDate)
+            }
+            return new Date(thisYear, thisMonth, chargeDayOfMonth)
+        }
        // if today is past the charge day
         if (todayDate.getDate() >= chargeDayOfMonth) {
             if (isValidFutureDate(forcedChargeDate)) return new Date(forcedChargeDate)
