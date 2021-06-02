@@ -4,6 +4,7 @@ import { SharesDisplay } from '../ShareDisplay/ShareDisplay'
 import { Title, Table, RightCell, VippsLogo, LeftCell, ShareTitle } from './Agreement.style'
 import vipps_logo from '../../images/vipps_logo.svg'
 import { Agreement } from './AgreementPage'
+import { formatChargeDay } from '../../helpers/dates'
 interface Props {
     agreement: Agreement | undefined;
     nextChargeDate: string;
@@ -24,7 +25,7 @@ export const AgreementInfo: React.FC<Props> = ({agreement, nextChargeDate}) => {
                         </tr>
                         <tr>
                             <LeftCell>Trekkdag:</LeftCell>
-                            <RightCell>Den {agreement.chargeDayOfMonth}. hver måned</RightCell>
+                            <RightCell>{formatChargeDay(agreement.chargeDayOfMonth)}</RightCell>
                         </tr>
                         <tr>
                             <LeftCell>Neste trekkdato:</LeftCell>

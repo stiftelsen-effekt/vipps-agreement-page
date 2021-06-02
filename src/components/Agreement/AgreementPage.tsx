@@ -10,7 +10,7 @@ import { SharesDisplay } from '../ShareDisplay/ShareDisplay'
 import { DatePicker } from '../DatePicker/DatePicker'
 import { API_URL } from '../../config/api'
 import useFetch from "react-fetch-hook"
-import { formatDate, getNextChargeDate } from '../../helpers/dates'
+import { formatChargeDay, formatDate, getNextChargeDate } from '../../helpers/dates'
 import { SharesSelection } from '../ShareSelection/ShareSelection'
 import vipps_logo from '../../images/vipps_logo.svg'
 import { MonthPicker } from '../MonthPicker/MonthPicker'
@@ -271,7 +271,7 @@ export function AgreementPage() {
                 {currentPage === Pages.CONFIRM_CHARGEDAY && (
                     <div>
                         <Title>Trekkdagen din er nå endret</Title>
-                        <ConfirmationText><b>Ny trekkdag:</b> Den {newChargeDay}. hver måned</ConfirmationText>
+                        <ConfirmationText><b>Ny trekkdag:</b> {formatChargeDay(newChargeDay)}</ConfirmationText>
                         <ConfirmationText><b>Neste trekkdato:</b> {nextChargeDate}</ConfirmationText>
                         <ConfirmButton setShowLoading={() => setShowLoading(true)} />
                     </div>

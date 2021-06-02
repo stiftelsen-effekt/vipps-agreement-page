@@ -87,7 +87,7 @@ export const DatePicker: React.FC<Props> = ({agreement, agreementCode, setNewCha
 					Gå tilbake
 				</Button>
 				<Button onClick={() => {
-					if (selectedChargeDay > 0 && selectedChargeDay < 29) {
+					if (selectedChargeDay >= 0 && selectedChargeDay < 29) {
 						// Sends request
 						if (requestData) {
 							updateChargeDay(

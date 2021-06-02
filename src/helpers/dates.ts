@@ -16,7 +16,14 @@ export function getNextChargeDate(
     todayDate: Date = new Date(), // Used for mocking today in tests
     ) {
 
+    // Gets the last day of this month
+    if (chargeDayOfMonth === 0) chargeDayOfMonth = new Date(thisYear, thisMonth+1, 0).getDate()
+    console.log(chargeDayOfMonth)
+
+    const chargeDateThisMonth = new Date(thisYear, thisMonth, chargeDayOfMonth)
+    console.log(chargeDateThisMonth)
     const chargeDateNextMonth = new Date(thisYear, thisMonth+1, chargeDayOfMonth)
+
     if (pendingChargeDueDate) return pendingChargeDueDate
 
     // If agreement is currently paused, next charge day is 4 days after pause ends
@@ -37,14 +44,16 @@ export function getNextChargeDate(
         // If today is before the charge day
         if (todayDate.getDate() < chargeDayOfMonth) {
             if (isValidFutureDate(forcedChargeDate)) {
-                if (forcedChargeDate < chargeDateNextMonth) return new Date(forcedChargeDate)
+                console.log(forcedChargeDate)
+                if (forcedChargeDate < chargeDateThisMonth) return new Date(forcedChargeDate)
             }
             return new Date(thisYear, thisMonth, chargeDayOfMonth)
         }
        // if today is past the charge day
         if (todayDate.getDate() >= chargeDayOfMonth) {
+            // If there is a valid forced charge date (intended behavior)
             if (isValidFutureDate(forcedChargeDate)) return new Date(forcedChargeDate)
-            // No charge this month, this should not happen
+            // No forced charge date this month (skips charging this month)
             return new Date(thisYear, thisMonth+1, chargeDayOfMonth)
         }
     }
@@ -71,9 +80,11 @@ export function getNewChargeDayResults(
 
     // 96 hours ahead of right now
     const fourDaysAhead = new Date(todayDate.getTime()+(dayMs*4))
-    // Default charge day this month using the new charge day
+    
+    // Gets the last day of this month
+    if (newChargeDay === 0) newChargeDay = new Date(thisYear, thisMonth+1, 0).getDate()
+
     const newChargeDateThisMonth = new Date(todayDate.getFullYear(), todayDate.getMonth(), newChargeDay)
-    // Default charge day next month using the new charge day
     const newChargeDateNextMonth = new Date(todayDate.getFullYear(), todayDate.getMonth()+1, newChargeDay)
 
     let forcedChargeDate: Date | false = false
@@ -167,6 +178,11 @@ export function isAgreementPaused(paused_until_date: string) {
         return true
     }
     return false
+}
+
+export function formatChargeDay(chargeDay: string) {
+    if (chargeDay === "0") return "Den siste dagen i måneden"
+    else return `Den ${chargeDay}. hver måned`
 }
 
 export function formatDate(date: Date) {
