@@ -57,7 +57,6 @@ interface urlParameters {
 
 export function AgreementPage() {
     const { agreementCode } = useParams<urlParameters>()
-    console.log(agreementCode)
     const agreementRequest = useFetch<Agreement>(`${API_URL}/vipps/agreement/urlcode/${agreementCode || "none"}`);
     const [agreement, setAgreement] = useState<Agreement>()
     const [paused, setPaused] = useState<boolean>(false)

@@ -16,10 +16,8 @@ export function getNextChargeDate(
 
     // Gets the last day of this month
     if (chargeDayOfMonth === 0) chargeDayOfMonth = new Date(thisYear, thisMonth+1, 0).getDate()
-    console.log(chargeDayOfMonth)
 
     const chargeDateThisMonth = new Date(thisYear, thisMonth, chargeDayOfMonth)
-    console.log(chargeDateThisMonth)
     const chargeDateNextMonth = new Date(thisYear, thisMonth+1, chargeDayOfMonth)
 
     if (pendingChargeDueDate) return pendingChargeDueDate
@@ -42,7 +40,6 @@ export function getNextChargeDate(
         // If today is before the charge day
         if (todayDate.getDate() < chargeDayOfMonth) {
             if (isValidFutureDate(forcedChargeDate)) {
-                console.log(forcedChargeDate)
                 if (forcedChargeDate < chargeDateThisMonth) return new Date(forcedChargeDate)
             }
             return new Date(thisYear, thisMonth, chargeDayOfMonth)
