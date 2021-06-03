@@ -2,13 +2,16 @@ import React from 'react';
 import { AgreementPage } from './components/Agreement/AgreementPage';
 import styled from 'styled-components';
 import effekt_logo from './images/effekt_logo.png'
+import { BrowserRouter as Router, Route } from "react-router-dom";
 
 
 function App() {
   return (
     <AppContainer>
       <EffektLogo onClick={() => window.location.href = 'https://gieffektivt.no'} src={effekt_logo} alt="Gå til gieffektivt" />
-      <AgreementPage />
+      <Router>
+        <Route path="/:agreementCode" children={<AgreementPage/>} />
+      </Router>
     </AppContainer>
   );
 }
