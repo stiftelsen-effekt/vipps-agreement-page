@@ -4,7 +4,7 @@ import Validator from "validator";
 import { API_URL } from "../../config/api";
 import { updateAgreementDistribution } from "../../helpers/requests";
 import { ButtonWrapper } from "../Agreement/Agreement.style";
-import { Changes, Pages } from "../Agreement/AgreementPage";
+import { Pages } from "../Agreement/AgreementPage";
 import { Button } from "../Shared/Buttons/Buttons.style";
 import { RedFont } from "./ShareSelection.style";
 import { TextInput } from "../TextInput/TextInput";
@@ -31,10 +31,9 @@ interface Props {
 	agreementCode: string;
 	setKID: Function;
 	setCurrentPage: Function;
-	setConfirmChange: Function;
 }
 
-export const SharesSelection: React.FC<Props> = ({agreementCode, setKID, setCurrentPage, setConfirmChange}) => {
+export const SharesSelection: React.FC<Props> = ({agreementCode, setKID, setCurrentPage}) => {
 	const [organizations, setOrganizations] = useState<Organization[]>()
 	const [shares, setShares] = useState<Share[]>([])
 	const [sumPercentage, setSumPercentage] = useState<number>()
@@ -95,7 +94,7 @@ export const SharesSelection: React.FC<Props> = ({agreementCode, setKID, setCurr
 			</div>
 			{sumPercentage === 100 ? null :<RedFont>{`Du har fordelt ${sumPercentage} av 100 prosent`}</RedFont>}
 			<ButtonWrapper>
-				<Button onClick={() => setCurrentPage(Pages.NONE)}>
+				<Button onClick={() => setCurrentPage(Pages.HOME)}>
 					Avbryt
 				</Button>
 				<Button onClick={async () => {
@@ -103,8 +102,7 @@ export const SharesSelection: React.FC<Props> = ({agreementCode, setKID, setCurr
 						const filteredShares = shares.filter(share => share.share > 0)
 						const newKID = await updateAgreementDistribution(agreementCode, filteredShares)
 						setKID(newKID)
-						setCurrentPage(Pages.CONFIRMATION)
-						setConfirmChange(Changes.SHARES)
+						setCurrentPage(Pages.CONFIRM_SHARES)
 					}
 				}}>
 					Lagre fordeling

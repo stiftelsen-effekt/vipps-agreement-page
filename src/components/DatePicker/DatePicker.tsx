@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { orange20 } from "../../config/colors";
-import { getNextChargeDate, isThreeDaysAhead } from "../../helpers/dates";
+import { formatDate, getNewChargeDayResults, getNextChargeDate, NewChargeDayResults } from "../../helpers/dates";
 import { updateChargeDay } from "../../helpers/requests";
 import { ButtonWrapper } from "../Agreement/Agreement.style";
-import { Agreement, Changes, Pages } from "../Agreement/AgreementPage";
+import { Agreement, Pages } from "../Agreement/AgreementPage";
 import { Button } from "../Shared/Buttons/Buttons.style";
 import { Datebox, DateText, Wrapper } from "./DatePicker.style";
 
@@ -11,22 +11,46 @@ interface Props {
 	agreement: Agreement | undefined;
 	agreementCode: string;
 	setNewChargeDay: Function;
+	setNextChargeDate: Function;
 	setCurrentPage: Function;
-	setConfirmChange: Function;
 }
 
-export const DatePicker: React.FC<Props> = ({agreement, agreementCode, setNewChargeDay, setCurrentPage, setConfirmChange}) => {
-	const [selectedChargeDay, setSelectedChargeDay] = useState<number>(1) // Change to string
+export const DatePicker: React.FC<Props> = ({agreement, agreementCode, setNewChargeDay, setNextChargeDate, setCurrentPage}) => {
+	const [selectedChargeDay, setSelectedChargeDay] = useState<number>(1)
 	const [newChargeDate, setNewChargeDate] = useState<string>("")
+	const [requestData, setRequestData] = useState<NewChargeDayResults>()
 
 	useEffect(() => {
-		if (agreement) setSelectedChargeDay(parseInt(agreement.chargeDayOfMonth))
+		if (agreement) {
+			setNewChargeDate(
+				formatDate(
+					getNextChargeDate(
+						parseInt(agreement.chargeDayOfMonth),
+						agreement.monthAlreadyCharged,
+						agreement.paused_until_date,
+						new Date(agreement.force_charge_date),
+						!agreement?.pendingDueCharge ? false : 
+						new Date(agreement.pendingDueCharge.due)
+					)
+				)
+			)
+			setSelectedChargeDay(parseInt(agreement.chargeDayOfMonth))
+		}
 	}, [agreement])
 
 	useEffect(() => {
-		isThreeDaysAhead(getNextChargeDate(selectedChargeDay.toString()) || "")
-		setNewChargeDate(getNextChargeDate(selectedChargeDay.toString()) || "")
-	}, [selectedChargeDay])
+		if (agreement) {
+			// Get the results from changing charge day to use in the request
+			let results = getNewChargeDayResults(
+				selectedChargeDay,
+				agreement.monthAlreadyCharged,
+				!agreement.pendingDueCharge ? false : 
+				new Date(agreement.pendingDueCharge.due)
+			)
+			setRequestData(results)
+			setNewChargeDate(formatDate(results.nextChargeDate))
+		}
+	}, [agreement, selectedChargeDay])
 
 	let dateBoxes: JSX.Element[] = []
 	for (let i = 1; i <= 28; i++) {
@@ -45,17 +69,37 @@ export const DatePicker: React.FC<Props> = ({agreement, agreementCode, setNewCha
 		<Wrapper>
 			<DateText>Velg hvilken dag av måneden du vil trekkes</DateText>
 			{dateBoxes.map(box => {return box})}
+			<Datebox 
+				key="0"
+				style={{
+					backgroundColor: selectedChargeDay === 0 ? orange20 : "white",
+					width: "120px"
+				}}
+				onClick={() => {
+					setSelectedChargeDay(0)
+				}}
+			>
+				Siste hver måned
+			</Datebox>
 			<DateText>Neste trekkdato blir: {newChargeDate}</DateText>
 			<ButtonWrapper>
-				<Button onClick={() => setCurrentPage(Pages.NONE)}>
-					Avbryt
+				<Button onClick={() => setCurrentPage(Pages.HOME)}>
+					Gå tilbake
 				</Button>
 				<Button onClick={() => {
-					if (selectedChargeDay > 0 && selectedChargeDay < 29) {
-						updateChargeDay(agreementCode, selectedChargeDay)
-						setNewChargeDay(selectedChargeDay)
-						setCurrentPage(Pages.CONFIRMATION)
-						setConfirmChange(Changes.DATE)
+					if (selectedChargeDay >= 0 && selectedChargeDay < 29) {
+						// Sends request
+						if (requestData) {
+							updateChargeDay(
+								agreementCode, 
+								selectedChargeDay,
+								requestData.forcedChargeDate,
+								requestData.cancelCharges
+							)						
+							setNextChargeDate(formatDate(requestData?.nextChargeDate))
+							setNewChargeDay(selectedChargeDay)
+							setCurrentPage(Pages.CONFIRM_CHARGEDAY)
+						}
 					}
 				}}>
 					Lagre trekkdag

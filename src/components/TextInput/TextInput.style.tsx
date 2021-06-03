@@ -22,19 +22,20 @@ export interface TextInputWrapperProps {
 export const TextInputWrapper = styled.div`
   display: block;
   margin-bottom: 5px;
-  font-size: 12px;
+  font-size: 14px;
   border: 1px solid ${gray18};
   border-radius: 5px;
   box-sizing: border-box;
   position: relative;
-  height: 50px;
   z-index: 1;
+  height: 46px;
 
   ${(props: TextInputWrapperProps) => {
     if (props.denomination) {
       return `
         &:after {
           content: "${props.denomination}";
+          font-size: 14px;
           height: 100%;
           position: absolute;
           right: 12px;
@@ -59,7 +60,7 @@ export const TextInputWrapper = styled.div`
 export const TextInputField = styled.input`
   z-index: 1;
   font-size: 14px;
-  padding: 16px;
+  padding: 14px;
   ${(props: TextInputProps) => {
     if (props.denomination) {
       return `
