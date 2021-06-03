@@ -15,7 +15,6 @@ import { SharesSelection } from '../ShareSelection/ShareSelection'
 import vipps_logo from '../../images/vipps_logo.svg'
 import { MonthPicker } from '../MonthPicker/MonthPicker'
 import { ConfirmButton } from '../Shared/ConfirmButton/ConfirmButton'
-import { readUrl } from '../../helpers/url'
 import { useParams } from 'react-router'
 
 export enum Pages {

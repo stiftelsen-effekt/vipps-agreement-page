@@ -1,10 +1,8 @@
 import moment from "moment"
 
 export const dayMs = 86400000
-const todayDate = new Date()
 const thisYear = new Date().getFullYear()
 const thisMonth = new Date().getMonth()
-const thisDay = new Date().getDate()
 
 // Only called once when starting the app
 export function getNextChargeDate(
