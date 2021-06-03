@@ -2,7 +2,7 @@
 FROM node:8-alpine as react-build
 WORKDIR /app
 COPY . ./
-RUN yarn
+RUN yarn --ignore-engines
 RUN yarn build
 
 # server environment
